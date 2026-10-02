@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { size: A4; margin: 14mm 12mm; }
+  body { font-family: Arial, sans-serif; font-size: 9px; color: #000; }
+
+  /* ── Cabecera (mismo estilo que las actas) ── */
+  .tbl-header { width: 100%; border-collapse: collapse; border: 1.5px solid #000; }
+  .tbl-header td { vertical-align: middle; }
+  .td-logo { width: 130px; padding: 6px 8px; border-right: 1.5px solid #000; text-align: center; }
+  .td-logo img { width: 118px; height: auto; }
+  .td-logo span { font-size: 10px; font-weight: bold; color: #1a3a6b; }
+  .td-titulo { text-align: center; padding: 6px 4px; }
+  .td-titulo .t1 { font-size: 12px; font-weight: bold; text-transform: uppercase; }
+  .td-titulo .t2 { font-size: 9px; color: #333; margin-top: 2px; }
+  .td-meta { width: 150px; border-left: 1.5px solid #000; font-size: 8px; padding: 4px 6px; }
+  .td-meta div { margin-bottom: 1px; }
+
+  .info { width: 100%; border-collapse: collapse; border: 1.5px solid #000; border-top: none; margin-bottom: 10px; }
+  .info td { padding: 3px 8px; font-size: 9px; border-right: 1px solid #ccc; }
+  .info td:last-child { border-right: none; }
+  .info .lbl { font-weight: bold; color: #333; }
+
+  .seccion-titulo { background: #1a3a6b; color: #fff; font-weight: bold; font-size: 10px;
+    text-transform: uppercase; padding: 4px 8px; margin: 10px 0 8px; }
+
+  /* ── Racks lado a lado (inline-block → envuelve y pagina bien en WeasyPrint) ── */
+  .racks { text-align: left; }
+  .rack-col { display: inline-block; vertical-align: top; width: 205px; margin: 0 10px 14px 0; }
+  .rack-head { font-size: 9.5px; font-weight: bold; color: #1a3a6b; margin-bottom: 3px; }
+  .rack-sub { font-size: 7.5px; color: #555; margin-bottom: 4px; }
+  .rack-frame { border: 1.5px solid #333; border-radius: 4px; background: #0d1a2e; padding: 3px; }
+
+  .slot { border-radius: 2px; margin-bottom: 2px; overflow: hidden;
+    display: flex; align-items: center; page-break-inside: avoid; }
+  .slot .unum { font-family: 'Courier New', monospace; font-size: 6.5px; color: #cfe3f2;
+    width: 34px; flex-shrink: 0; text-align: right; padding-right: 5px; }
+
+  .slot-free { border: 1px dashed rgba(255,255,255,0.18); background: rgba(255,255,255,0.03); }
+  .slot-free .unum { color: #7f93a6; }
+  .slot-free .free-lbl { font-size: 6.5px; color: #7f93a6; text-transform: uppercase; letter-spacing: .4px; }
+
+  .slot-dev { color: #fff; border: 1px solid rgba(0,0,0,0.25); }
+  .slot-dev .unum { color: rgba(255,255,255,0.85); }
+  .dev-txt { overflow: hidden; }
+  .dev-name { font-size: 8px; font-weight: bold; white-space: nowrap; }
+  .dev-meta { font-size: 6.5px; opacity: 0.9; white-space: nowrap; }
+
+  .legend { margin-top: 4px; }
+  .legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; vertical-align: middle; margin-right: 3px; }
+  .legend .item { font-size: 7px; color: #444; margin-right: 8px; white-space: nowrap; }
+
+  /* ── Fuera de rack ── */
+  table.fuera { width: 100%; border-collapse: collapse; border: 1px solid #000; }
+  table.fuera th, table.fuera td { border: 1px solid #999; padding: 3px 6px; font-size: 8px; text-align: left; }
+  table.fuera th { background: #eef2f8; font-weight: bold; }
+  table.fuera .dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+
+  .empty-note { font-size: 8.5px; color: #777; font-style: italic; padding: 6px 2px; }
+  .footer { margin-top: 12px; border-top: 1px solid #999; padding-top: 4px; font-size: 7px; color: #666; }
+</style>
+</head>
+<body>
+
+  <table class="tbl-header">
+    <tr>
+      <td class="td-logo">
+        {% if logo_base64 %}<img src="data:image/png;base64,{{ logo_base64 }}" alt="{{ empresa_nombre }}">{% else %}<span>{{ empresa_nombre }}</span>{% endif %}
+      </td>
+      <td class="td-titulo">
+        <div class="t1">Cuarto Técnico — Diagrama de Red</div>
+        <div class="t2">{{ empresa_nombre }}{% if sede and sede != '—' %} · {{ sede }}{% endif %}</div>
+      </td>
+      <td class="td-meta">
+        <div><b>Cuarto:</b> {{ identificador }}</div>
+        <div><b>Generado:</b> {{ fecha }}</div>
+        <div><b>Dispositivos:</b> {{ num_dispositivos }}</div>
+      </td>
+    </tr>
+  </table>
+
+  <table class="info">
+    <tr>
+      <td><span class="lbl">Identificador:</span> {{ identificador }}{% if nombre %} — {{ nombre }}{% endif %}</td>
+      <td><span class="lbl">Sede:</span> {{ sede }}</td>
+    </tr>
+    <tr>
+      <td><span class="lbl">Empresa:</span> {{ empresa_nombre }}</td>
+      <td><span class="lbl">Ubicación:</span> {{ ubicacion_detalle or '—' }}</td>
+    </tr>
+  </table>
+
+  <div class="seccion-titulo">Racks</div>
+  {% if racks %}
+  <div class="racks">
+    {% for rack in racks %}
+    <div class="rack-col">
+      <div class="rack-head">{{ rack.nombre }}</div>
+      <div class="rack-sub">{{ rack.capacidad_u }}U · {{ rack.usadas_u }}U usadas · {{ rack.libres_u }}U libres</div>
+      <div class="rack-frame">
+        {% for row in rack.rows %}
+          {% if row.kind == 'dev' %}
+          <div class="slot slot-dev" style="height: {{ row.span * 18 }}px; background: {{ row.color }}">
+            <span class="unum">{% if row.span > 1 %}{{ row.u_ini }}–{{ row.u_fin }}{% else %}{{ row.u_ini }}{% endif %}</span>
+            <span class="dev-txt">
+              <span class="dev-name">{{ row.consecutivo }}</span>
+              <span class="dev-meta">{{ [row.tipo, row.modelo, (row.puertos ~ 'p' if row.puertos else None), (row.span ~ 'U')] | select | join(' · ') }}</span>
+            </span>
+          </div>
+          {% else %}
+          <div class="slot slot-free" style="height: 18px">
+            <span class="unum">{{ row.u }}</span><span class="free-lbl">libre</span>
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% set tipos = rack.rows | selectattr('kind', 'equalto', 'dev') | map(attribute='tipo') | select | list | unique | list %}
+      {% if tipos %}
+      <div class="legend">
+        {% for t in tipos %}<span class="item"><span class="dot" style="background: {{ (rack.rows | selectattr('tipo','equalto',t) | first).color }}"></span>{{ t }}</span>{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-note">Este cuarto técnico no tiene racks registrados.</div>
+  {% endif %}
+
+  <div class="seccion-titulo">Fuera de rack</div>
+  {% if fuera %}
+  <table class="fuera">
+    <thead>
+      <tr>
+        <th style="width:90px">Consecutivo</th>
+        <th>Tipo</th>
+        <th>Marca / Modelo</th>
+        <th>Ubicación física</th>
+        <th style="width:80px">IP gestión</th>
+        <th style="width:44px">Puertos</th>
+        <th>Conectado a</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in fuera %}
+      <tr>
+        <td><span class="dot" style="background: {{ d.color }}"></span>{{ d.consecutivo }}</td>
+        <td>{{ d.tipo or '—' }}</td>
+        <td>{{ d.modelo or '—' }}</td>
+        <td>{{ d.ubicacion_fisica or '—' }}</td>
+        <td>{{ d.ip or '—' }}</td>
+        <td>{{ d.puertos if d.puertos is not none else '—' }}</td>
+        <td>{{ d.conexion or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-note">No hay dispositivos fuera de rack en este cuarto técnico.</div>
+  {% endif %}
+
+  <div class="footer">Documento generado automáticamente — refleja el estado actual del cuarto técnico al {{ fecha }}.</div>
+
+</body>
+</html>

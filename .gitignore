@@ -1,0 +1,28 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Variables de entorno — NUNCA al repo
+backend/.env
+
+# PDFs generados
+backend/storage/
+
+# Base de datos local
+*.db
+*.sqlite3
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log

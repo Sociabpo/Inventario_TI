@@ -1,0 +1,3021 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servicios TIC — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.5.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/dashboard.css?v=1">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img class="logo-img" src="/img/ServiciosTIC_Blanco.png" alt="Servicios TIC">
+    <div class="logo-sub">Inventario Tecnológico</div>
+  </div>
+  <nav class="nav">
+
+    <div class="nav-group" data-group="principal">
+      <button class="nav-group-header" onclick="toggleNavGroup('principal')">
+        <span>Principal</span><i class="ti ti-chevron-down nav-chevron"></i>
+      </button>
+      <div class="nav-group-items">
+        <button class="nav-item active" onclick="showView('dashboard',this)"><span class="nav-icon">⬡</span>Dashboard</button>
+        <button class="nav-item" onclick="showView('pendientes',this)"><span class="nav-icon"><i class="ti ti-checklist"></i></span>Mis Pendientes<span class="nav-badge" id="nav-pendientes-badge" style="display:none">0</span></button>
+      </div>
+    </div>
+
+    <div class="nav-group" data-group="gestion-activos">
+      <button class="nav-group-header" onclick="toggleNavGroup('gestion-activos')">
+        <span>Gestión de activos</span><i class="ti ti-chevron-down nav-chevron"></i>
+      </button>
+      <div class="nav-group-items">
+        <div class="nav-subgroup" data-subgroup="inventario">
+          <button class="nav-item nav-parent" onclick="toggleNavSubgroup('inventario')">
+            <span class="nav-icon"><i class="ti ti-package"></i></span>Inventario
+            <i class="ti ti-chevron-down nav-chevron-sm"></i>
+          </button>
+          <div class="nav-subgroup-items">
+            <button class="nav-item nav-child" data-permiso="activos.ver" onclick="showView('activos',this)">Activos<span class="nav-badge" id="badge-activos">—</span></button>
+            <button class="nav-item nav-child" data-permiso="accesorios.ver" onclick="showView('accesorios',this)">Accesorios</button>
+          </div>
+        </div>
+        <button class="nav-item" data-permiso="asignaciones.ver" onclick="showView('asignaciones',this)"><span class="nav-icon">⇄</span>Asignaciones</button>
+        <button class="nav-item" data-permiso="reservas.gestionar" onclick="showView('reservas',this)"><span class="nav-icon"><i class="ti ti-bookmark"></i></span>Reservas</button>
+        <button class="nav-item" data-permiso="activos.ver" onclick="showView('hoja-vida-view',this)"><span class="nav-icon"><i class="ti ti-id-badge"></i></span>Hojas de vida</button>
+        <button class="nav-item" data-permiso="estados.cambiar" onclick="showView('bajas',this)"><span class="nav-icon"><i class="ti ti-trash"></i></span>Bajas</button>
+      </div>
+    </div>
+
+    <div class="nav-group" data-group="operaciones">
+      <button class="nav-group-header" onclick="toggleNavGroup('operaciones')">
+        <span>Operaciones</span><i class="ti ti-chevron-down nav-chevron"></i>
+      </button>
+      <div class="nav-group-items">
+        <button class="nav-item" data-permiso="compras.ver" onclick="showView('compras',this)"><span class="nav-icon">🛒</span>Compras</button>
+        <button class="nav-item" data-permiso-any="mantenimiento.planes,mantenimiento.ejecutar" onclick="showView('mantenimiento',this)"><span class="nav-icon"><i class="ti ti-tool"></i></span>Mantenimiento</button>
+        <button class="nav-item" data-permiso="actas.ver" onclick="showView('actas',this)"><span class="nav-icon">📄</span>Actas PDF</button>
+      </div>
+    </div>
+
+    <div class="nav-group" data-group="infraestructura">
+      <button class="nav-group-header" onclick="toggleNavGroup('infraestructura')">
+        <span>Infraestructura</span><i class="ti ti-chevron-down nav-chevron"></i>
+      </button>
+      <div class="nav-group-items">
+        <button class="nav-item" data-permiso="servidores.ver" onclick="showView('servidores',this)"><span class="nav-icon">🖧</span>Servidores</button>
+        <button class="nav-item" data-permiso="redes.ver" onclick="showView('redes',this)"><span class="nav-icon"><i class="ti ti-network"></i></span>Redes</button>
+        <button class="nav-item" data-permiso="impresoras.ver" onclick="showView('impresoras',this)"><span class="nav-icon"><i class="ti ti-printer"></i></span>Impresoras</button>
+      </div>
+    </div>
+
+    <div class="nav-group" data-group="directorio">
+      <button class="nav-group-header" onclick="toggleNavGroup('directorio')">
+        <span>Directorio</span><i class="ti ti-chevron-down nav-chevron"></i>
+      </button>
+      <div class="nav-group-items">
+        <button class="nav-item" data-permiso="usuarios.ver" onclick="showView('usuarios',this)"><span class="nav-icon">👤</span>Empleados</button>
+        <button class="nav-item" data-permiso="empresas.ver" onclick="showView('empresas',this)"><span class="nav-icon">🏢</span>Empresas</button>
+      </div>
+    </div>
+
+    <div class="nav-group" data-group="sistema">
+      <button class="nav-group-header" onclick="toggleNavGroup('sistema')">
+        <span>Sistema</span><i class="ti ti-chevron-down nav-chevron"></i>
+      </button>
+      <div class="nav-group-items">
+        <button class="nav-item" data-permiso="usuarios.ver" id="nav-administracion" onclick="showView('administracion',this)"><span class="nav-icon">🔐</span>Administración</button>
+        <button class="nav-item" onclick="showView('historial',this)"><span class="nav-icon">⏱</span>Historial</button>
+      </div>
+    </div>
+
+  </nav>
+  <div class="sidebar-empresa-badge" id="seb">
+    <div class="seb-label">Empresa activa</div>
+    <div class="seb-name" id="seb-name">—</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="tico-mini"><img src="/img/TICO.png" alt="TICO"></div>
+    <div><div class="u-name" id="user-name">—</div><div class="u-role" id="user-role">—</div></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <span class="topbar-title" id="topbar-title">Dashboard</span>
+      <span class="topbar-sub" id="topbar-sub">— Resumen general</span>
+    </div>
+    <div class="topbar-right">
+      <div class="empresa-selector" id="empresa-selector" onclick="toggleEmpresaDropdown()">
+        <div class="emp-dot" id="emp-dot"></div>
+        <div class="emp-info">
+          <div class="emp-label">Empresa activa</div>
+          <div class="emp-name" id="emp-name-display">Todas las empresas</div>
+        </div>
+        <span class="emp-arrow">▾</span>
+      </div>
+      <button class="btn btn-primary" id="btn-nuevo" onclick="accionNuevo()" style="display:none">+ <span id="btn-nuevo-label">Nuevo activo</span></button>
+      <button class="btn-logout" onclick="logout()">Salir</button>
+    </div>
+  </div>
+
+  <!-- BANNER EMPRESA ACTIVA -->
+  <div class="empresa-banner" id="empresa-banner">
+    <div class="banner-dot" id="banner-dot"></div>
+    <div>
+      <div class="banner-label">Filtrando por empresa</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="banner-name" id="banner-name">—</span>
+        <span class="banner-prefijo" id="banner-prefijo">—</span>
+      </div>
+    </div>
+    <div class="banner-stats">
+      <div class="banner-stat"><div class="banner-stat-num" id="ban-activos">—</div><div class="banner-stat-lbl">Activos</div></div>
+      <div class="banner-stat"><div class="banner-stat-num" id="ban-empleados">—</div><div class="banner-stat-lbl">Empleados</div></div>
+      <div class="banner-stat"><div class="banner-stat-num" id="ban-asig">—</div><div class="banner-stat-lbl">Asignados</div></div>
+    </div>
+    <button class="banner-clear" onclick="seleccionarEmpresa('','Todas las empresas','')">✕ Ver todas</button>
+  </div>
+
+  <!-- SIDEBAR EMPRESA BADGE -->
+  <div style="display:none" id="sidebar-badge-wrap"></div>
+
+  <div class="content" id="content">
+
+    <!-- DASHBOARD -->
+    <!-- MIS PENDIENTES -->
+    <div id="view-pendientes" style="display:none">
+      <div id="pendientes-header" class="pend-header"></div>
+      <div id="pendientes-grid" class="pend-grid"></div>
+    </div>
+
+    <div id="view-dashboard">
+      <!-- ALERTAS (solo chips con count > 0) -->
+      <div id="dash-alertas" class="dash-alertas-row" style="display:none"></div>
+      <div class="kpi-grid kpi-grid-5">
+        <div class="kpi cyan"><div class="kpi-glow"></div><div class="kpi-label">Total Activos</div><div class="kpi-value" id="kpi-total">—</div><div class="kpi-sub">registrados en el sistema</div></div>
+        <div class="kpi green"><div class="kpi-glow"></div><div class="kpi-label">Asignados</div><div class="kpi-value" id="kpi-asignados">—</div><div class="kpi-sub" id="kpi-pct">del inventario total</div></div>
+        <div class="kpi green"><div class="kpi-glow"></div><div class="kpi-label">Disponibles</div><div class="kpi-value" id="kpi-disponibles">—</div><div class="kpi-sub">listos para asignar</div></div>
+        <div class="kpi amber"><div class="kpi-glow"></div><div class="kpi-label">Mantenimiento</div><div class="kpi-value" id="kpi-mant">—</div><div class="kpi-sub">fuera de servicio</div></div>
+        <div class="kpi purple"><div class="kpi-glow"></div><div class="kpi-label">Empleados</div><div class="kpi-value" id="kpi-empleados">—</div><div class="kpi-sub">activos en el sistema</div></div>
+      </div>
+      <div class="grid-main">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Últimas asignaciones</span><button class="panel-link" onclick="showView('asignaciones',null)">Ver todas →</button></div>
+          <table class="tbl"><thead><tr><th>Activo</th><th>Empleado</th><th>Empresa</th><th>Estado</th><th>Fecha</th></tr></thead>
+          <tbody id="tbl-dash-asig"></tbody></table>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Distribución</span></div>
+          <div class="donut-wrap">
+            <div class="donut-row">
+              <svg width="110" height="110" viewBox="0 0 110 110">
+                <circle cx="55" cy="55" r="42" fill="none" stroke="#152440" stroke-width="14"/>
+                <circle id="d-asig" cx="55" cy="55" r="42" fill="none" stroke="var(--cyan)" stroke-width="14" stroke-dasharray="264" stroke-dashoffset="66" stroke-linecap="round" transform="rotate(-90 55 55)"/>
+                <text x="55" y="51" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="800" font-family="JetBrains Mono,monospace" id="d-total">—</text>
+                <text x="55" y="65" text-anchor="middle" fill="var(--text3)" font-size="8" font-family="Exo 2,sans-serif">TOTAL</text>
+              </svg>
+              <div class="donut-legend">
+                <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--cyan)"></div>Asignados</div><span class="legend-val" id="leg-a">—</span></div>
+                <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--green)"></div>Disponibles</div><span class="legend-val" id="leg-d">—</span></div>
+                <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--amber)"></div>Mant.</div><span class="legend-val" id="leg-m">—</span></div>
+                <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--red)"></div>Baja</div><span class="legend-val" id="leg-b">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 3: Reservados + Fuera de servicio -->
+      <div class="grid-main" style="grid-template-columns:1fr 1fr">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">📌 Activos reservados</span>
+            <button class="panel-link" id="dash-reservados-vertodos" style="display:none" onclick="dashVerReservados()">Ver todos →</button>
+          </div>
+          <div id="dash-reservados-body"><div style="padding:18px;text-align:center;color:var(--text3)">Cargando...</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">🔧 Fuera de servicio</span>
+            <button class="panel-link" id="dash-fuera-vertodos" style="display:none" onclick="dashVerFueraServicio()">Ver todos →</button>
+          </div>
+          <div id="dash-fuera-desglose" style="padding:8px 18px 0;font-size:11px;color:var(--text3)"></div>
+          <div id="dash-fuera-body"><div style="padding:18px;text-align:center;color:var(--text3)">Cargando...</div></div>
+        </div>
+      </div>
+
+      <!-- ROW 4: Préstamos con fecha límite -->
+      <div class="panel" style="margin-bottom:16px">
+        <div class="panel-head">
+          <span class="panel-title">⏰ Préstamos con fecha límite</span>
+          <button class="panel-link" id="dash-prestamos-vertodos" style="display:none" onclick="irAPrestamos('prestamo')">Ver todos →</button>
+        </div>
+        <div id="dash-prestamos-body"><div style="padding:18px;text-align:center;color:var(--text3)">Cargando...</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Actividad reciente</span><button class="panel-link" onclick="showView('historial',null)">Ver historial →</button></div>
+        <div id="act-body"><div style="padding:20px;text-align:center;color:var(--text3)">Cargando...</div></div>
+      </div>
+    </div>
+
+    <!-- ACTIVOS -->
+    <div id="view-activos" style="display:none">
+      <div class="tabs" id="tabs-activos">
+        <button class="tab active" onclick="filtrarActivos('',this)">Todos</button>
+        <button class="tab" onclick="filtrarActivos('disponible',this)">Disponible</button>
+        <button class="tab" onclick="filtrarActivos('asignado',this)">Asignado</button>
+        <button class="tab" onclick="filtrarActivos('mantenimiento_preventivo',this)">Mant. Preventivo</button>
+        <button class="tab" onclick="filtrarActivos('mantenimiento_correctivo',this)">Mant. Correctivo</button>
+        <button class="tab" onclick="filtrarActivos('en_reparacion',this)">En Reparación</button>
+        <button class="tab" onclick="filtrarActivos('en_garantia',this)">En Garantía</button>
+        <button class="tab" onclick="filtrarActivos('reservado',this)">Reservado</button>
+        <button class="tab" onclick="filtrarActivos('retirado',this)">Retirado</button>
+      </div>
+      <div class="search-bar">
+        <input class="search-input" id="search-activos" placeholder="Buscar por placa, serial, modelo, empleado..." oninput="buscarActivos()">
+        <button class="btn btn-ghost btn-filtros" id="btn-filtros-activos" onclick="toggleFiltros('activos')">⚙ Filtros</button>
+        <button class="btn btn-ghost" data-permiso-btn="reservas.gestionar" style="color:#54A0FF;border-color:rgba(84,160,255,0.35)" onclick="abrirModalReserva()"><i class="ti ti-bookmark"></i> Reservar</button>
+        <button class="btn btn-primary" onclick="abrirModalActivo()">+ Nuevo activo</button>
+      </div>
+      <div class="filtros-panel" id="filtros-activos">
+        <div class="filtros-grid">
+          <div class="fgroup"><label>Tipo de activo</label>
+            <select class="fselect" id="filtro-activos-tipo" onchange="aplicarFiltrosActivos()"><option value="">Todos</option></select></div>
+          <div class="fgroup"><label>Marca</label>
+            <select class="fselect" id="filtro-activos-marca" onchange="aplicarFiltrosActivos()"><option value="">Todas</option></select></div>
+          <div class="fgroup"><label>Empresa</label>
+            <select class="fselect" id="filtro-activos-empresa" onchange="aplicarFiltrosActivos()"><option value="">Todas</option></select></div>
+          <div class="fgroup"><label>Asignación</label>
+            <select class="fselect" id="filtro-activos-asignacion" onchange="aplicarFiltrosActivos()">
+              <option value="">Todos</option><option value="asignado">Asignados</option><option value="libre">Sin asignar</option></select></div>
+          <div class="fgroup"><label>Préstamo</label>
+            <select class="fselect" id="filtro-activos-prestamo" onchange="aplicarFiltrosActivos()">
+              <option value="">Todos</option><option value="prestamo">Préstamos</option><option value="vencido">Préstamos vencidos</option></select></div>
+          <div class="fgroup"><label>Compra desde</label>
+            <input type="date" class="finput" id="filtro-activos-fcompra-desde" onchange="aplicarFiltrosActivos()"></div>
+          <div class="fgroup"><label>Compra hasta</label>
+            <input type="date" class="finput" id="filtro-activos-fcompra-hasta" onchange="aplicarFiltrosActivos()"></div>
+        </div>
+        <div class="filtros-foot">
+          <span class="filtros-count" id="count-activos"></span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" style="color:var(--green);border-color:rgba(0,229,160,0.3)" onclick="exportarActivos('excel',this)">⬇ Excel</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,77,109,0.3)" onclick="exportarActivos('pdf',this)">⬇ PDF</button>
+            <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosActivos()">Limpiar filtros</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel tabla-scroll">
+        <table class="tbl"><thead><tr><th>Placa</th><th>Tipo / Modelo</th><th>Serial</th><th>Procesador / RAM</th><th>Empresa</th><th>Asignado a</th><th>Estado</th><th>Acción</th></tr></thead>
+        <tbody id="tbl-activos-body"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ACCESORIOS -->
+    <div id="view-accesorios" style="display:none">
+      <div class="tabs" id="tabs-accesorios">
+        <button class="tab active" onclick="filtrarAccesorios('',this)">Todos</button>
+        <button class="tab" onclick="filtrarAccesorios('disponible',this)">Disponible</button>
+        <button class="tab" onclick="filtrarAccesorios('asignado',this)">Asignado</button>
+        <button class="tab" onclick="filtrarAccesorios('mantenimiento_preventivo',this)">Mant. Preventivo</button>
+        <button class="tab" onclick="filtrarAccesorios('mantenimiento_correctivo',this)">Mant. Correctivo</button>
+        <button class="tab" onclick="filtrarAccesorios('en_reparacion',this)">En Reparación</button>
+        <button class="tab" onclick="filtrarAccesorios('en_garantia',this)">En Garantía</button>
+        <button class="tab" onclick="filtrarAccesorios('reservado',this)">Reservado</button>
+        <button class="tab" onclick="filtrarAccesorios('retirado',this)">Retirado</button>
+      </div>
+      <div class="search-bar">
+        <input class="search-input" id="search-accesorios" placeholder="Buscar por placa, tipo, marca..." oninput="buscarAccesorios()">
+        <button class="btn btn-ghost btn-filtros" id="btn-filtros-accesorios" onclick="toggleFiltros('accesorios')">⚙ Filtros</button>
+        <button class="btn btn-ghost" data-permiso-btn="reservas.gestionar" style="color:#54A0FF;border-color:rgba(84,160,255,0.35)" onclick="abrirModalReserva()"><i class="ti ti-bookmark"></i> Reservar</button>
+        <button class="btn btn-primary" onclick="abrirModalAccesorio()">+ Nuevo accesorio</button>
+      </div>
+      <div class="filtros-panel" id="filtros-accesorios">
+        <div class="filtros-grid">
+          <div class="fgroup"><label>Tipo de accesorio</label>
+            <select class="fselect" id="filtro-accesorios-tipo" onchange="aplicarFiltrosAccesorios()"><option value="">Todos</option></select></div>
+          <div class="fgroup"><label>Marca</label>
+            <select class="fselect" id="filtro-accesorios-marca" onchange="aplicarFiltrosAccesorios()"><option value="">Todas</option></select></div>
+          <div class="fgroup"><label>Empresa</label>
+            <select class="fselect" id="filtro-accesorios-empresa" onchange="aplicarFiltrosAccesorios()"><option value="">Todas</option></select></div>
+          <div class="fgroup"><label>Asignación</label>
+            <select class="fselect" id="filtro-accesorios-asignacion" onchange="aplicarFiltrosAccesorios()">
+              <option value="">Todos</option><option value="asignado">Asignados</option><option value="libre">Sin asignar</option></select></div>
+          <div class="fgroup"><label>Préstamo</label>
+            <select class="fselect" id="filtro-accesorios-prestamo" onchange="aplicarFiltrosAccesorios()">
+              <option value="">Todos</option><option value="prestamo">Préstamos</option><option value="vencido">Préstamos vencidos</option></select></div>
+        </div>
+        <div class="filtros-foot">
+          <span class="filtros-count" id="count-accesorios"></span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" style="color:var(--green);border-color:rgba(0,229,160,0.3)" onclick="exportarAccesorios('excel',this)">⬇ Excel</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,77,109,0.3)" onclick="exportarAccesorios('pdf',this)">⬇ PDF</button>
+            <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosAccesorios()">Limpiar filtros</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel tabla-scroll">
+        <table class="tbl"><thead><tr><th>Placa</th><th>Tipo</th><th>Marca / Modelo</th><th>Serial</th><th>Empresa</th><th>Asignado a</th><th>Estado</th><th>Acción</th></tr></thead>
+        <tbody id="tbl-accesorios-body"></tbody></table>
+      </div>
+    </div>
+
+    <!-- RESERVAS -->
+    <div id="view-reservas" style="display:none">
+      <div class="search-bar">
+        <input class="search-input" id="reservas-search" placeholder="Buscar por nº de alta, placa o serial..." oninput="buscarReservas()">
+        <button class="btn btn-ghost btn-filtros" id="btn-filtros-reservas" onclick="toggleFiltros('reservas')">⚙ Filtros</button>
+        <button class="btn btn-primary" data-permiso-btn="reservas.gestionar" onclick="abrirModalReserva()"><i class="ti ti-bookmark"></i> Reservar</button>
+      </div>
+      <div class="filtros-panel" id="filtros-reservas">
+        <div class="filtros-grid">
+          <div class="fgroup"><label>Estado</label>
+            <select class="fselect" id="reservas-filtro-estado" onchange="cargarReservas()">
+              <option value="">Todas</option>
+              <option value="activa">Activas</option>
+              <option value="completada">Completadas</option>
+              <option value="cancelada">Canceladas</option>
+              <option value="vencida">Vencidas</option>
+            </select></div>
+          <div class="fgroup"><label>Vence desde</label>
+            <input type="date" class="finput" id="reservas-filtro-desde" onchange="aplicarFiltrosReservas()"></div>
+          <div class="fgroup"><label>Vence hasta</label>
+            <input type="date" class="finput" id="reservas-filtro-hasta" onchange="aplicarFiltrosReservas()"></div>
+          <div class="fgroup"><label>Vencimiento</label>
+            <select class="fselect" id="reservas-filtro-vence" onchange="aplicarFiltrosReservas()">
+              <option value="">Todas</option>
+              <option value="pronto">Vencen pronto (≤2 días)</option>
+              <option value="vencidas">Ya vencidas</option>
+            </select></div>
+        </div>
+        <div class="filtros-foot">
+          <span class="filtros-count" id="count-reservas"></span>
+          <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosReservas()">Limpiar filtros</button>
+        </div>
+      </div>
+      <div class="panel tabla-scroll">
+        <table class="tbl"><thead><tr><th>N° Alta</th><th>Descripción</th><th>Empresa</th><th>Fecha límite</th><th>Recursos</th><th>Estado</th><th>Acción</th></tr></thead>
+        <tbody id="tbl-reservas-body"></tbody></table>
+      </div>
+    </div>
+
+    <!-- HOJA DE VIDA (expediente completo con buscador) -->
+    <div id="view-hoja-vida-view" style="display:none">
+      <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px">
+        <div style="position:relative">
+          <input class="finput" id="hv-search-input"
+                 placeholder="Buscar activo por placa o serial... (ej: SC0004, 5CD2394KLM)"
+                 style="padding-left:36px"
+                 oninput="hvBuscarActivo()" onkeydown="if(event.key==='Enter')hvBuscarPrimero()">
+          <i class="ti ti-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px"></i>
+        </div>
+        <div id="hv-search-results" style="margin-top:8px"></div>
+      </div>
+      <div id="hv-view-content">
+        <div style="text-align:center;padding:60px 20px;color:var(--text3)">
+          <i class="ti ti-id-badge" style="font-size:48px;color:var(--border2);display:block;margin-bottom:12px"></i>
+          <div style="font-size:14px;color:var(--text2);margin-bottom:4px">Busca un activo para ver su hoja de vida</div>
+          <div style="font-size:12px;color:var(--text3)">Ingresa la placa (ej: SC0004) o el serial del equipo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ASIGNACIONES -->
+    <div id="view-asignaciones" style="display:none">
+      <div class="panel" style="margin-bottom:14px">
+        <div class="panel-head"><span class="panel-title">Nueva asignación</span></div>
+        <div style="padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;font-weight:600">Empresa</label>
+              <select class="fselect" id="asig-empresa" onchange="buscarEmpleadoAsig()"><option value="">Seleccionar...</option></select></div>
+            <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;font-weight:600">Cédula del empleado</label>
+              <input class="finput" id="asig-cedula" placeholder="Ej: 1045892310" oninput="buscarEmpleadoAsig()"></div>
+            <div id="asig-placa-wrap"><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;font-weight:600">Placa o serial del activo <span style="color:var(--text3);font-weight:400;text-transform:none">(opcional — puedes agregar varios)</span></label>
+              <input class="finput" id="asig-placa" placeholder="Ej: SC0001 o serial" oninput="buscarActivoAsig()" autocomplete="off">
+              <div id="asig-placa-results" class="asig-results"></div>
+              <div id="asig-activos-lista" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div></div>
+          </div>
+
+          <!-- ACCESORIOS -->
+          <div id="asig-acc-wrap">
+            <label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;font-weight:600">Accesorios <span style="color:var(--text3);font-weight:400;text-transform:none">(opcional — buscar por placa o serial)</span></label>
+            <input class="finput" id="asig-acc-placa" placeholder="Ej: SCA0001 o serial" oninput="buscarAccesorioAsig()" autocomplete="off">
+            <div id="asig-acc-results" class="asig-results"></div>
+            <div id="asig-acc-lista" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+          </div>
+
+          <div id="asig-info" style="display:none;background:rgba(6,191,255,0.08);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--cyan)"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;font-weight:600">Responsable entrega <span style="color:var(--text3);font-weight:400;text-transform:none">(usuario actual)</span></label>
+              <input class="finput" id="asig-responsable" readonly title="Se asigna automáticamente al usuario que registra la asignación" style="background:rgba(6,191,255,0.05);color:var(--text2);cursor:not-allowed"></div>
+            <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;font-weight:600">Observaciones</label>
+              <input class="finput" id="asig-obs" placeholder="Opcional..."></div>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);cursor:pointer;user-select:none">
+              <input type="checkbox" id="asig-es-prestamo" onchange="toggleAsigPrestamo()"> 📅 Es préstamo temporal
+            </label>
+            <div id="asig-fecha-limite-wrap" style="display:none">
+              <label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;font-weight:600">Fecha límite de devolución</label>
+              <input class="finput" id="asig-fecha-limite" type="date" style="max-width:200px"></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="crearAsignacion()">✓ Crear asignación y generar acta PDF</button>
+            <button class="btn btn-ghost" onclick="limpiarAsig()">Limpiar</button>
+          </div>
+          <div id="asig-msg" style="display:none;border-radius:8px;padding:10px 14px;font-size:12px"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Asignaciones activas</span></div>
+        <table class="tbl"><thead><tr><th>Activo</th><th>Tipo</th><th>Empleado</th><th>Empresa</th><th>Asignado por</th><th>Fecha</th><th>Acción</th></tr></thead>
+        <tbody id="tbl-asig-body"></tbody></table>
+      </div>
+    </div>
+
+    <!-- EMPLEADOS -->
+    <div id="view-usuarios" style="display:none">
+      <div class="search-bar">
+        <input class="search-input" id="search-usuarios" placeholder="Buscar por cédula o nombre..." oninput="buscarUsuarios()">
+        <button class="btn btn-ghost btn-filtros" id="btn-filtros-empleados" onclick="toggleFiltros('empleados')">⚙ Filtros</button>
+        <button class="btn btn-primary" onclick="abrirModalUsuario()">+ Nuevo empleado</button>
+      </div>
+      <div class="filtros-panel" id="filtros-empleados">
+        <div class="filtros-grid">
+          <div class="fgroup"><label>Empresa</label>
+            <select class="fselect" id="filtro-empleados-empresa" onchange="aplicarFiltrosEmpleados()"><option value="">Todas</option></select></div>
+          <div class="fgroup"><label>Sede</label>
+            <select class="fselect" id="filtro-empleados-sede" onchange="aplicarFiltrosEmpleados()"><option value="">Todas</option></select></div>
+          <div class="fgroup"><label>Cargo</label>
+            <select class="fselect" id="filtro-empleados-cargo" onchange="aplicarFiltrosEmpleados()"><option value="">Todos</option></select></div>
+          <div class="fgroup"><label>Área</label>
+            <select class="fselect" id="filtro-empleados-area" onchange="aplicarFiltrosEmpleados()"><option value="">Todas</option></select></div>
+          <div class="fgroup"><label>Estado</label>
+            <select class="fselect" id="filtro-empleados-estado" onchange="aplicarFiltrosEmpleados()">
+              <option value="">Todos</option><option value="activo">Activo</option><option value="inactivo">Inactivo</option><option value="retirado">Retirado</option></select></div>
+        </div>
+        <div class="filtros-foot">
+          <span class="filtros-count" id="count-empleados"></span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" style="color:var(--green);border-color:rgba(0,229,160,0.3)" onclick="exportarEmpleados('excel',this)">⬇ Excel</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,77,109,0.3)" onclick="exportarEmpleados('pdf',this)">⬇ PDF</button>
+            <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosEmpleados()">Limpiar filtros</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel tabla-scroll">
+        <table class="tbl"><thead><tr><th>Cédula</th><th>Nombre</th><th>Cargo / Área</th><th>Sede</th><th>Empresa</th><th>Estado</th><th>Recursos</th><th>Última acta</th><th>Asignar</th></tr></thead>
+        <tbody id="tbl-usuarios-body"></tbody></table>
+      </div>
+    </div>
+
+    <!-- EMPRESAS -->
+    <div id="view-empresas" style="display:none">
+      <div class="search-bar">
+        <input class="search-input" id="search-empresas" placeholder="Buscar empresa..." oninput="buscarEmpresas()">
+        <button class="btn btn-primary" onclick="abrirModalEmpresa()">+ Nueva empresa</button>
+      </div>
+      <div class="panel">
+        <table class="tbl"><thead><tr><th>NIT</th><th>Empresa</th><th>Prefijo</th><th>Ciudad</th><th>Correo</th><th>Estado</th></tr></thead>
+        <tbody id="tbl-empresas-body"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ACTAS -->
+    <!-- BAJAS -->
+    <div id="view-bajas" style="display:none">
+      <div class="search-bar">
+        <input class="search-input" id="search-bajas" placeholder="Buscar por N° baja o placa..." oninput="renderBajas(bajasCache.filter(b=>{const q=(document.getElementById('search-bajas').value||'').toLowerCase();return !q||(b.numero_baja||'').toLowerCase().includes(q)||(b.placa||'').toLowerCase().includes(q);}))">
+        <button class="btn btn-ghost btn-sm" onclick="cargarBajas()"><i class="ti ti-refresh"></i> Actualizar</button>
+      </div>
+      <div class="panel tabla-scroll">
+        <table class="tbl"><thead><tr><th>N° Baja</th><th>Recurso</th><th>Motivo</th><th>Justificación</th><th>Solicitó</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="tbl-bajas-body"></tbody></table>
+      </div>
+    </div>
+
+    <div id="view-actas" style="display:none">
+      <div class="search-bar">
+        <input class="search-input" id="search-actas" placeholder="Buscar por empleado, documento o placa..." oninput="buscarActas()">
+        <button class="btn btn-ghost btn-filtros" id="btn-filtros-actas" onclick="toggleFiltros('actas')">⚙ Filtros</button>
+      </div>
+      <div class="filtros-panel" id="filtros-actas">
+        <div class="filtros-grid">
+          <div class="fgroup"><label>Tipo</label>
+            <select class="fselect" id="filtro-actas-tipo" onchange="aplicarFiltrosActas()">
+              <option value="">Todos</option><option value="entrega">Entrega</option><option value="devolucion">Devolución</option></select></div>
+          <div class="fgroup"><label>Empresa</label>
+            <select class="fselect" id="filtro-actas-empresa" onchange="aplicarFiltrosActas()"><option value="">Todas</option></select></div>
+          <div class="fgroup"><label>Firma</label>
+            <select class="fselect" id="filtro-actas-firma" onchange="aplicarFiltrosActas()">
+              <option value="">Todas</option><option value="firmada">Firmadas</option><option value="pendiente">Pendientes</option></select></div>
+          <div class="fgroup"><label>Desde</label>
+            <input type="date" class="finput" id="filtro-actas-desde" onchange="aplicarFiltrosActas()"></div>
+          <div class="fgroup"><label>Hasta</label>
+            <input type="date" class="finput" id="filtro-actas-hasta" onchange="aplicarFiltrosActas()"></div>
+        </div>
+        <div class="filtros-foot">
+          <span class="filtros-count" id="count-actas"></span>
+          <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosActas()">Limpiar filtros</button>
+        </div>
+      </div>
+      <div class="panel tabla-scroll">
+        <table class="tbl"><thead><tr><th>Tipo</th><th>Activo</th><th>Empleado</th><th>Empresa</th><th>Responsable</th><th>Fecha</th><th>PDF</th><th>Firma</th></tr></thead>
+        <tbody id="tbl-actas-body"></tbody></table>
+      </div>
+    </div>
+
+    <!-- COMPRAS Y FACTURAS -->
+    <div id="view-compras" style="display:none">
+      <div class="tabs" id="tabs-compras">
+        <button class="tab active" data-tab="solicitudes" onclick="switchComprasTab('solicitudes',this)">Solicitudes</button>
+        <button class="tab" data-tab="ordenes" onclick="switchComprasTab('ordenes',this)">Órdenes de compra</button>
+        <button class="tab" data-tab="facturas" onclick="switchComprasTab('facturas',this)">Facturas</button>
+        <button class="tab" data-tab="recepciones" onclick="switchComprasTab('recepciones',this)">Recepciones</button>
+        <button class="tab" data-tab="contratos" onclick="switchComprasTab('contratos',this)">Alquileres</button>
+      </div>
+
+      <!-- Stats chips -->
+      <div id="compras-stats" class="compras-stats"></div>
+
+      <!-- Panel: Solicitudes -->
+      <div class="compras-panel" id="compras-panel-solicitudes">
+        <div class="search-bar">
+          <input class="search-input" id="search-solicitudes" placeholder="Buscar por N° solicitud o título..." oninput="buscarSolicitudes()">
+          <button class="btn btn-primary" data-permiso-btn="compras.crear_solicitud" onclick="abrirModalSolicitud()">+ Nueva solicitud</button>
+        </div>
+        <div class="panel tabla-scroll">
+          <table class="tbl"><thead><tr><th>N° / Fecha</th><th>Título</th><th>Empresa</th><th>Solicitante</th><th>Ítems</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tbl-solicitudes-body"></tbody></table>
+        </div>
+      </div>
+
+      <!-- Panel: Órdenes -->
+      <div class="compras-panel" id="compras-panel-ordenes" style="display:none">
+        <div class="search-bar">
+          <div style="flex:1"></div>
+          <button class="btn btn-ghost" onclick="abrirModalProveedor()">+ Proveedor</button>
+        </div>
+        <div class="panel tabla-scroll">
+          <table class="tbl"><thead><tr><th>OC #</th><th>Proveedor</th><th>Tipo</th><th>Valor</th><th>Estado</th><th>Entrega esperada</th><th>Acciones</th></tr></thead>
+          <tbody id="tbl-ordenes-body"></tbody></table>
+        </div>
+      </div>
+
+      <!-- Panel: Facturas -->
+      <div class="compras-panel" id="compras-panel-facturas" style="display:none">
+        <div class="search-bar">
+          <div style="flex:1"></div>
+          <button class="btn btn-primary" data-permiso-btn="compras.gestionar_facturas" onclick="abrirModalFactura()">+ Nueva factura</button>
+        </div>
+        <div class="panel tabla-scroll">
+          <table class="tbl"><thead><tr><th>Factura #</th><th>Proveedor</th><th>OC</th><th>Valor</th><th>Vencimiento</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tbl-facturas-body"></tbody></table>
+        </div>
+      </div>
+
+      <!-- Panel: Recepciones -->
+      <div class="compras-panel" id="compras-panel-recepciones" style="display:none">
+        <div class="panel tabla-scroll">
+          <table class="tbl"><thead><tr><th>Fecha</th><th>OC</th><th>Proveedor</th><th>Ítems</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tbl-recepciones-body"></tbody></table>
+        </div>
+      </div>
+
+      <!-- Panel: Alquileres -->
+      <div class="compras-panel" id="compras-panel-contratos" style="display:none">
+        <div class="panel tabla-scroll">
+          <table class="tbl"><thead><tr><th>Activo / Accesorio</th><th>Proveedor</th><th>Inicio</th><th>Fin</th><th>Valor/mes</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tbl-contratos-body"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANTENIMIENTO PREVENTIVO (Fase 1: planes) -->
+    <div id="view-mantenimiento" style="display:none">
+      <div class="tabs" id="tabs-mant">
+        <button class="tab active" data-mtab="planes" data-permiso="mantenimiento.planes" onclick="switchMantTab('planes',this)">Planes</button>
+        <button class="tab" data-mtab="planificar" data-permiso="mantenimiento.planes" onclick="switchMantTab('planificar',this)">Planificar</button>
+        <button class="tab" data-mtab="calendario" data-permiso="mantenimiento.planes" onclick="switchMantTab('calendario',this)">Calendario</button>
+        <button class="tab" data-mtab="tableros" data-permiso="mantenimiento.planes" onclick="switchMantTab('tableros',this)">Tableros</button>
+        <button class="tab" data-mtab="mis-tareas" data-permiso="mantenimiento.ejecutar" onclick="switchMantTab('mis-tareas',this)">Mis mantenimientos</button>
+      </div>
+
+      <!-- Sub-vista: Planes -->
+      <div class="mant-panel" id="mant-panel-planes">
+        <div class="search-bar">
+          <input class="search-input" id="mant-search" placeholder="Buscar plan por nombre o tipo..." oninput="renderPlanesMant()">
+          <select class="fselect" id="mant-filtro-activo" style="max-width:170px" onchange="renderPlanesMant()">
+            <option value="">Todos</option>
+            <option value="1">Activos</option>
+            <option value="0">Inactivos</option>
+          </select>
+          <button class="btn btn-primary" data-permiso-btn="mantenimiento.planes" onclick="abrirModalPlan()"><i class="ti ti-tool"></i> Nuevo plan</button>
+        </div>
+        <div class="panel tabla-scroll">
+          <table class="tbl"><thead><tr>
+            <th>Plan</th><th>Tipos cubiertos</th><th style="text-align:center">Periodicidad</th>
+            <th style="text-align:center">Ítems</th><th>Estado</th><th></th>
+          </tr></thead><tbody id="tbl-planes-body"></tbody></table>
+        </div>
+      </div>
+
+      <!-- Sub-vista: Planificar -->
+      <div class="mant-panel" id="mant-panel-planificar" style="display:none">
+        <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:14px;align-items:start">
+          <!-- Equipos recomendados -->
+          <div>
+            <div class="search-bar" style="margin-bottom:8px">
+              <select class="fselect" id="rec-filtro-empresa" style="max-width:220px" onchange="tpEmpresaChange()"><option value="">Todas las empresas</option></select>
+              <select class="fselect" id="rec-filtro-tipo" style="max-width:200px" onchange="cargarRecomendados()"><option value="">Todos los tipos</option></select>
+              <span style="flex:1"></span>
+              <label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="rec-select-all" onchange="recToggleAll(this.checked)"> Seleccionar todo</label>
+            </div>
+            <div class="panel tabla-scroll">
+              <table class="tbl"><thead><tr>
+                <th style="width:34px"></th><th>Placa</th><th>Tipo</th><th>Marca/Modelo</th>
+                <th>Tenedor</th><th>Últ. mantenimiento</th>
+              </tr></thead><tbody id="tbl-recomendados-body"></tbody></table>
+            </div>
+            <div style="font-size:12px;color:var(--text3);margin-top:6px"><span id="rec-count">0</span> equipo(s) seleccionado(s)</div>
+          </div>
+
+          <!-- Panel de planificación -->
+          <div class="panel" style="padding:14px">
+            <div class="fsection" style="margin-top:0">Planificar mantenimientos</div>
+            <div class="fgroup"><label>Técnico *</label><select class="fselect" id="plan-tecnico"><option value="">Seleccionar...</option></select></div>
+            <div class="fgroup"><label>Rango de fechas *</label>
+              <select class="fselect" id="plan-rango" onchange="planToggleRango()">
+                <option value="mes">Este mes</option>
+                <option value="semana">Esta semana</option>
+                <option value="custom">Rango personalizado</option>
+              </select>
+            </div>
+            <div id="plan-rango-custom" class="frow cols2" style="display:none">
+              <div class="fgroup"><label>Desde</label><input class="finput" id="plan-desde" type="date"></div>
+              <div class="fgroup"><label>Hasta</label><input class="finput" id="plan-hasta" type="date"></div>
+            </div>
+            <div class="fgroup"><label>Días de referencia *</label>
+              <div id="plan-dias" style="display:flex;gap:6px;flex-wrap:wrap">
+                <label class="dia-chip"><input type="checkbox" value="0"> L</label>
+                <label class="dia-chip"><input type="checkbox" value="1"> M</label>
+                <label class="dia-chip"><input type="checkbox" value="2" checked> X</label>
+                <label class="dia-chip"><input type="checkbox" value="3"> J</label>
+                <label class="dia-chip"><input type="checkbox" value="4" checked> V</label>
+                <label class="dia-chip"><input type="checkbox" value="5"> S</label>
+                <label class="dia-chip"><input type="checkbox" value="6"> D</label>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="asignarTareas()">Asignar mantenimientos</button>
+            <div id="plan-result" style="display:none;margin-top:10px;font-size:12px"></div>
+          </div>
+        </div>
+
+        <!-- Tareas programadas -->
+        <div class="fsection">Tareas programadas</div>
+        <div class="search-bar" style="margin-bottom:8px;flex-wrap:wrap;gap:8px">
+          <select class="fselect" id="tp-filtro-tecnico" style="max-width:200px" onchange="cargarTareasProg()">
+            <option value="">Todos los técnicos</option>
+          </select>
+          <select class="fselect" id="tp-filtro-estado" style="max-width:170px" onchange="cargarTareasProg()">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="en_ejecucion">En ejecución</option>
+            <option value="completada">Completada</option>
+            <option value="cancelada">Cancelada</option>
+          </select>
+          <select class="fselect" id="tp-filtro-fecha" style="max-width:170px" onchange="tpFechaChange()">
+            <option value="">Cualquier fecha</option>
+            <option value="hoy">Hoy</option>
+            <option value="semana">Esta semana</option>
+            <option value="mes">Este mes</option>
+            <option value="vencidas">Vencidas</option>
+            <option value="custom">Rango personalizado…</option>
+          </select>
+          <span id="tp-rango-custom" style="display:none;gap:6px;align-items:center">
+            <input type="date" class="fselect" id="tp-filtro-desde" style="max-width:150px" onchange="cargarTareasProg()">
+            <span style="color:var(--text3)">–</span>
+            <input type="date" class="fselect" id="tp-filtro-hasta" style="max-width:150px" onchange="cargarTareasProg()">
+          </span>
+          <span style="flex:1"></span>
+          <button class="btn btn-sm" onclick="tpLimpiarFiltros()"><i class="ti ti-filter-off"></i> Limpiar filtros</button>
+        </div>
+        <div class="panel tabla-scroll">
+          <table class="tbl"><thead><tr>
+            <th>Placa</th><th>Tipo</th><th>Técnico</th><th>Programada</th><th>Plan</th><th>Estado</th>
+          </tr></thead><tbody id="tbl-tareas-prog-body"></tbody></table>
+        </div>
+      </div>
+
+      <!-- Sub-vista: Calendario (planner) -->
+      <div class="mant-panel" id="mant-panel-calendario" style="display:none">
+        <div class="search-bar" style="flex-wrap:wrap;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="calMes(-1)">‹</button>
+          <span id="cal-mes-label" style="font-weight:700;min-width:150px;text-align:center"></span>
+          <button class="btn btn-ghost btn-sm" onclick="calMes(1)">›</button>
+          <button class="btn btn-ghost btn-sm" onclick="calHoy()">Hoy</button>
+          <span style="flex:1"></span>
+          <select class="fselect" id="cal-filtro-empresa" style="max-width:200px" onchange="cargarCalendario()"><option value="">Todas las empresas</option></select>
+          <select class="fselect" id="cal-filtro-tecnico" style="max-width:200px" onchange="renderCalendario()"><option value="">Todos los técnicos</option></select>
+          <label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="cal-show-completadas" onchange="renderCalendario()"> Ver completadas</label>
+        </div>
+        <div id="cal-grid" class="cal-grid"></div>
+        <div id="cal-legend" class="cal-legend"></div>
+      </div>
+
+      <!-- Sub-vista: Tableros (analítica gerencial) -->
+      <div class="mant-panel" id="mant-panel-tableros" style="display:none">
+        <div class="frow" style="align-items:flex-end;gap:12px;margin-bottom:12px">
+          <div class="tabs" id="tabs-tableros" style="flex:1">
+            <button class="tab active" data-tsub="coordinacion" onclick="switchTablerosSub('coordinacion',this)">Coordinación</button>
+            <button class="tab" data-tsub="planificacion" onclick="switchTablerosSub('planificacion',this)">Planificación</button>
+            <button class="tab" data-tsub="parque" onclick="switchTablerosSub('parque',this)">Parque</button>
+          </div>
+          <div class="fgroup" style="margin:0;min-width:200px">
+            <select class="fselect" id="tab-filtro-empresa" onchange="cargarTableroActual()">
+              <option value="">Todas las empresas</option>
+            </select>
+          </div>
+        </div>
+        <div class="tablero-sub" id="tablero-coordinacion"></div>
+        <div class="tablero-sub" id="tablero-planificacion" style="display:none"></div>
+        <div class="tablero-sub" id="tablero-parque" style="display:none"></div>
+      </div>
+
+      <!-- Sub-vista: Mis mantenimientos (técnico) -->
+      <div class="mant-panel" id="mant-panel-mis-tareas" style="display:none">
+        <div id="mis-tareas-dash"></div>
+      </div>
+    </div>
+
+    <!-- MODAL DETALLE TAREA (calendario) -->
+    <div class="modal-overlay" id="modal-cal-tarea">
+      <div class="modal">
+        <div class="modal-head"><h3 id="calt-title">Tarea de mantenimiento</h3><button class="modal-close" onclick="cerrarModal('modal-cal-tarea')">×</button></div>
+        <div class="modal-body">
+          <input type="hidden" id="calt-id">
+          <div id="calt-info" style="font-size:13px;line-height:1.7"></div>
+          <div class="fgroup" style="margin-top:12px" id="calt-reasignar-wrap">
+            <label>Reasignar a técnico</label>
+            <div style="display:flex;gap:6px">
+              <select class="fselect" id="calt-tecnico"><option value="">Seleccionar...</option></select>
+              <button class="btn btn-ghost btn-sm" onclick="calReasignar()">Reasignar</button>
+            </div>
+          </div>
+          <div class="fgroup" id="calt-reprog-wrap">
+            <label>Cambiar fecha</label>
+            <div style="display:flex;gap:6px">
+              <input class="finput" id="calt-fecha" type="date">
+              <button class="btn btn-ghost btn-sm" onclick="calReprogramar()">Cambiar</button>
+            </div>
+          </div>
+          <div id="calt-msg" style="display:none;font-size:12px;color:var(--text3);margin-top:8px"></div>
+        </div>
+        <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModal('modal-cal-tarea')">Cerrar</button></div>
+      </div>
+    </div>
+
+    <!-- HISTORIAL -->
+    <div id="view-historial" style="display:none">
+      <div class="panel" style="margin-bottom:14px">
+        <div class="panel-head"><span class="panel-title">Consultar historial</span></div>
+        <div style="padding:14px 18px;display:flex;gap:10px;align-items:flex-end">
+          <div style="flex:1"><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;font-weight:600">Placa del activo</label>
+            <input class="finput" id="hist-placa" placeholder="Ej: SC0001"></div>
+          <div style="flex:1"><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;font-weight:600">Cédula del empleado</label>
+            <input class="finput" id="hist-cedula" placeholder="Ej: 1045892310"></div>
+          <button class="btn btn-primary" onclick="consultarHistorial()">Consultar</button>
+        </div>
+      </div>
+      <div id="hist-result" style="max-height:calc(100vh - 260px);overflow-y:auto;padding-right:4px"></div>
+    </div>
+
+    <!-- SERVIDORES -->
+    <div id="view-servidores" style="display:none">
+      <div class="kpi-grid">
+        <div class="kpi cyan"><div class="kpi-glow"></div><div class="kpi-label">Total Servidores</div><div class="kpi-value" id="srv-kpi-total">—</div><div class="kpi-sub">registrados en el sistema</div></div>
+        <div class="kpi green"><div class="kpi-glow"></div><div class="kpi-label">Activos</div><div class="kpi-value" id="srv-kpi-activos">—</div><div class="kpi-sub">operativos</div></div>
+        <div class="kpi amber"><div class="kpi-glow"></div><div class="kpi-label">Inactivos</div><div class="kpi-value" id="srv-kpi-inactivos">—</div><div class="kpi-sub">fuera de servicio</div></div>
+        <div class="kpi purple"><div class="kpi-glow"></div><div class="kpi-label">Top Cobertura</div><div class="kpi-value" style="font-size:14px" id="srv-kpi-cobertura">—</div><div class="kpi-sub">herramienta con más servidores</div></div>
+      </div>
+      <div class="tabs" id="tabs-servidores">
+        <button class="tab active" onclick="filtrarServidores('',this)">Todos</button>
+      </div>
+      <div class="search-bar">
+        <input class="search-input" id="search-servidores" placeholder="Buscar por nombre, hostname, IP, SO..." oninput="buscarServidores()">
+        <button class="btn btn-ghost" id="srv-btn-filtros" onclick="toggleFiltrosServidores(this)">Filtros</button>
+        <button class="btn btn-ghost" id="srv-btn-verbaja" onclick="toggleVerBajaServidores(this)">Dados de baja</button>
+        <button class="btn btn-primary" id="srv-btn-nuevo" onclick="abrirModalServidor()" style="display:none">+ Nuevo servidor</button>
+      </div>
+      <div class="panel" id="srv-filtros-panel" style="display:none;margin-bottom:10px">
+        <div class="frow cols3">
+          <div class="fgroup"><label>Tipo</label><select class="fselect" id="srv-f-tipo"></select></div>
+          <div class="fgroup"><label>Ambiente</label><select class="fselect" id="srv-f-ambiente"></select></div>
+          <div class="fgroup"><label>Criticidad</label><select class="fselect" id="srv-f-criticidad"></select></div>
+        </div>
+        <div class="frow cols3">
+          <div class="fgroup"><label>Estado</label><select class="fselect" id="srv-f-estado"></select></div>
+          <div class="fgroup"><label>Ubicación (hosting)</label><select class="fselect" id="srv-f-hosting"></select></div>
+          <div class="fgroup"><label>Sistema operativo</label><select class="fselect" id="srv-f-so"></select></div>
+        </div>
+        <div class="frow cols2">
+          <div class="fgroup">
+            <label>Herramientas <span style="color:var(--text3);font-weight:400">(Ctrl+clic para varias)</span></label>
+            <select class="fselect" id="srv-f-herramientas" multiple size="4"></select>
+            <div style="margin-top:4px;font-size:11px;color:var(--text3)">Coincidencia:
+              <select class="fselect" id="srv-f-herr-match" style="width:auto;display:inline-block">
+                <option value="any">tiene alguna</option>
+                <option value="all">tiene todas</option>
+              </select>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label>Servicios <span style="color:var(--text3);font-weight:400">(Ctrl+clic para varios)</span></label>
+            <select class="fselect" id="srv-f-servicios" multiple size="4"></select>
+            <div style="margin-top:4px;font-size:11px;color:var(--text3)">Coincidencia:
+              <select class="fselect" id="srv-f-svc-match" style="width:auto;display:inline-block">
+                <option value="any">tiene alguno</option>
+                <option value="all">tiene todos</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+          <button class="btn btn-ghost" onclick="limpiarFiltrosServidores()">Limpiar filtros</button>
+          <button class="btn btn-primary" onclick="aplicarFiltrosServidores()">Aplicar filtros</button>
+        </div>
+      </div>
+      <div class="panel">
+        <table class="tbl">
+          <thead><tr>
+            <th>Nombre / Hostname</th><th>IP LAN</th><th>Tipo</th>
+            <th>Ambiente</th><th>Criticidad</th><th>SO</th>
+            <th>Estado</th><th>Herr. / Empresa</th>
+          </tr></thead>
+          <tbody id="tbl-servidores-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REDES -->
+    <div id="view-redes" style="display:none">
+
+      <!-- ── NIVEL 1: Cuartos técnicos ── -->
+      <div id="redes-nivel1">
+        <div class="search-bar" style="justify-content:space-between">
+          <select class="fselect" id="redes-filtro-sede" onchange="filtrarCuartosPorSede(this.value)" style="max-width:240px">
+            <option value="">Todas las sedes</option>
+          </select>
+          <button class="btn btn-primary" id="redes-btn-nuevo-cuarto" data-permiso-btn="redes.gestionar" onclick="abrirModalCuarto()"><i class="ti ti-plus"></i> Nuevo cuarto técnico</button>
+        </div>
+        <div class="redes-grid" id="redes-cuartos-grid"></div>
+      </div>
+
+      <!-- ── NIVEL 2: Detalle de un cuarto ── -->
+      <div id="redes-nivel2" style="display:none">
+        <div class="redes-breadcrumb">
+          <a onclick="volverACuartos()"><i class="ti ti-arrow-left"></i> Cuartos técnicos</a>
+          <span class="sep">›</span>
+          <span id="redes-bc-empresa"></span>
+          <span class="sep">·</span>
+          <span id="redes-bc-sede"></span>
+          <span class="sep">›</span>
+          <strong id="redes-bc-ident"></strong>
+        </div>
+
+        <div class="panel" style="margin-bottom:16px">
+          <div class="panel-head">
+            <div>
+              <span class="panel-title" id="redes-det-titulo">—</span>
+              <div class="redes-det-sub" id="redes-det-sub"></div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-ghost btn-sm" onclick="exportarCuartoPDF(this)"><i class="ti ti-file-type-pdf"></i> Exportar PDF</button>
+              <button class="btn btn-ghost btn-sm" data-permiso-btn="redes.gestionar" onclick="abrirModalCuarto(_redesCuartoDetalle)"><i class="ti ti-pencil"></i> Editar cuarto</button>
+              <button class="btn btn-ghost btn-sm" data-permiso-btn="redes.gestionar" onclick="abrirModalRack()"><i class="ti ti-plus"></i> Agregar rack</button>
+              <button class="btn btn-primary btn-sm" data-permiso-btn="redes.gestionar" onclick="abrirModalDispositivo()"><i class="ti ti-plus"></i> Agregar dispositivo</button>
+            </div>
+          </div>
+          <div class="redes-det-body" id="redes-det-body"></div>
+        </div>
+
+        <div class="redes-racks-row" id="redes-racks-grid"></div>
+
+        <div class="redes-fuera-wrap" id="redes-fuera-wrap" style="display:none">
+          <div class="redes-section-title"><i class="ti ti-box"></i> Fuera de rack</div>
+          <div class="redes-fuera-grid" id="redes-fuera-grid"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- IMPRESORAS -->
+    <div id="view-impresoras" style="display:none">
+      <div class="tabs" id="tabs-impresoras">
+        <button class="tab active" data-itab="inventario" onclick="switchImprTab('inventario',this)">Inventario</button>
+        <button class="tab" data-itab="reportes" onclick="switchImprTab('reportes',this)"><i class="ti ti-file-alert"></i> Reportes de daño</button>
+      </div>
+
+      <!-- TAB: Inventario -->
+      <div class="impr-panel" id="impr-panel-inventario">
+        <div class="search-bar">
+          <select class="fselect" id="impr-filtro-estado" style="max-width:200px" onchange="cargarImpresoras()">
+            <option value="">Todos los estados</option>
+            <option value="en_servicio">En servicio</option>
+            <option value="inactiva">Inactiva</option>
+            <option value="en_reparacion">En reparación</option>
+            <option value="reemplazada">Reemplazadas (historial)</option>
+          </select>
+          <input class="search-input" id="impr-search" placeholder="Buscar por serial o modelo..." oninput="filtrarImpresoras()">
+          <button class="btn btn-primary" data-permiso-btn="impresoras.gestionar" onclick="abrirModalImpresora()"><i class="ti ti-plus"></i> Nueva impresora</button>
+        </div>
+        <div class="panel">
+          <table class="tbl">
+            <thead><tr>
+              <th>Modelo / Serial</th><th>Ciudad / Sede</th><th>Dependencia</th>
+              <th>Tipo</th><th>IP</th><th>Estado</th><th>Correo escaneo</th><th>Proveedor</th><th>Empresa</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="tbl-impresoras-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB: Reportes de daño -->
+      <div class="impr-panel" id="impr-panel-reportes" style="display:none">
+        <div class="search-bar">
+          <input class="finput" id="rep-filtro-mes" type="month" style="max-width:160px" onchange="cargarReportesImpr()">
+          <select class="fselect" id="rep-filtro-empresa" style="max-width:220px" onchange="onRepEmpresaChange()"><option value="">Todas las empresas</option></select>
+          <select class="fselect" id="rep-filtro-sede" style="max-width:200px" onchange="cargarReportesImpr()"><option value="">Todas las sedes</option></select>
+          <span style="flex:1"></span>
+          <button class="btn btn-ghost" onclick="exportarReportesImpr('excel',this)"><i class="ti ti-file-spreadsheet"></i> Excel</button>
+          <button class="btn btn-ghost" onclick="exportarReportesImpr('pdf',this)"><i class="ti ti-file-type-pdf"></i> PDF</button>
+        </div>
+        <div class="panel" style="margin-bottom:14px">
+          <div class="panel-head"><span class="panel-title">Impresoras más reportadas</span></div>
+          <div id="rep-ranking" style="padding:12px 16px"></div>
+        </div>
+        <div class="panel">
+          <table class="tbl">
+            <thead><tr>
+              <th>Fecha</th><th>Impresora / Serial</th><th>Sede</th><th>Empresa</th><th>Daño</th><th>Reportó</th><th>Enviado</th>
+            </tr></thead>
+            <tbody id="rep-list-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMINISTRACIÓN -->
+    <div id="view-administracion" style="display:none">
+      <div class="tabs">
+        <button class="tab adm-tab active" onclick="switchAdmTab('usuarios',this)">Usuarios del sistema</button>
+        <button class="tab adm-tab" onclick="switchAdmTab('roles',this)">Roles y permisos</button>
+        <button class="tab adm-tab" onclick="switchAdmTab('catalogos',this)"><i class="ti ti-list"></i> Catálogos</button>
+        <button class="tab adm-tab" id="adm-tab-importacion" onclick="switchAdmTab('importacion',this)" style="display:none"><i class="ti ti-file-import"></i> Importación</button>
+      </div>
+
+      <div class="adm-panel active" id="adm-panel-usuarios">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Usuarios del sistema</span>
+            <button class="btn btn-primary btn-sm" id="btn-nuevo-usr-adm" onclick="abrirModalNuevoUsuario()" style="display:none">+ Nuevo usuario</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Usuario</th><th>Estado</th><th>Roles y empresas</th><th>Acciones</th></tr></thead>
+            <tbody id="tbl-adm-usuarios-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="adm-panel" id="adm-panel-roles">
+        <div id="adm-roles-ref"></div>
+      </div>
+
+      <div class="adm-panel" id="adm-panel-catalogos">
+        <!-- contenido renderizado por JS -->
+      </div>
+
+      <div class="adm-panel" id="adm-panel-importacion">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Importación masiva (Excel)</span></div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+            <div style="background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.3);color:var(--amber);border-radius:8px;padding:10px 14px;font-size:12px">
+              <i class="ti ti-alert-triangle"></i> Haz un <strong>respaldo de la base de datos</strong> antes de importar. Nada se importa hasta que confirmes después de la vista previa.
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <span style="font-size:12px;color:var(--text3)">Tipo de importación:</span>
+              <button class="btn btn-sm" id="imp-tipo-activos" onclick="setImpTipo('activos')">Activos</button>
+              <button class="btn btn-sm" id="imp-tipo-accesorios" onclick="setImpTipo('accesorios')">Accesorios</button>
+            </div>
+            <div id="imp-empresa-wrap" style="display:none">
+              <label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Empresa del archivo * <span style="color:var(--text4)">(todas las filas se importan a esta empresa)</span></label>
+              <select class="fselect" id="imp-empresa" style="max-width:340px" onchange="onArchivoImport()"><option value="">Seleccionar empresa...</option></select>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+              <button class="btn btn-ghost" onclick="descargarPlantilla()"><i class="ti ti-download"></i> <span id="imp-plantilla-label">Descargar plantilla</span></button>
+              <input type="file" id="imp-file" accept=".xlsx" class="finput" style="max-width:340px" onchange="onArchivoImport()">
+              <button class="btn btn-primary" id="imp-btn-validar" onclick="validarImportacion()" disabled>Validar archivo</button>
+            </div>
+            <div style="font-size:11px;color:var(--text3)">Paso 1: validar (vista previa, no escribe nada) · Paso 2: confirmar para importar solo las filas válidas.</div>
+            <div id="imp-preview"></div>
+            <div id="imp-result"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ═══════════════════════════════════════ MODALES ═══════════════════════ -->
+
+<!-- MODAL ACTIVO -->
+<div class="modal-overlay" id="modal-activo">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3 id="modal-activo-title">Nuevo activo</h3>
+      <div style="display:flex;gap:8px;margin-left:auto;align-items:center">
+        <button class="btn btn-ghost btn-sm" id="activo-etq-link" style="display:none" onclick="_etiquetaDesdeModalActivo()" title="Imprimir etiqueta"><i class="ti ti-qrcode"></i> Etiqueta</button>
+        <button class="btn btn-ghost btn-sm" id="activo-hv-link" style="display:none;color:var(--purple);border-color:rgba(167,139,255,0.3)"
+          onclick="cerrarModal('modal-activo');abrirHojaVida(document.getElementById('activo-id').value)"><i class="ti ti-id-badge"></i> Ver hoja de vida →</button>
+        <button class="modal-close" onclick="cerrarModal('modal-activo')">×</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="activo-id">
+      <div id="activo-readonly-banner" style="display:none;align-items:center;gap:8px;padding:10px 12px;margin-bottom:14px;border-radius:8px;background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.35);color:var(--red);font-size:12px">
+        <i class="ti ti-lock"></i> Activo retirado — solo lectura. La información puede consultarse pero no modificarse.
+      </div>
+      <div class="fsection">Identificación</div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Empresa *</label>
+          <select class="fselect" id="activo-empresa" onchange="onCambioEmpresaActivo()"><option value="">Seleccionar...</option></select></div>
+        <div class="fgroup"><label>Tipo de activo *</label>
+          <select class="fselect" id="activo-tipo" onchange="actualizarCamposActivo()">
+            <option value="">Seleccionar...</option>
+          </select></div>
+      </div>
+      <div class="frow cols3">
+        <div class="fgroup"><label>Marca</label><input class="finput" id="activo-marca" placeholder="Dell, HP, Lenovo..."></div>
+        <div class="fgroup"><label>Modelo</label><input class="finput" id="activo-modelo" placeholder="Latitude 5540..."></div>
+        <div class="fgroup"><label>Serial</label><input class="finput" id="activo-serial" placeholder="Número de serie"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>No. Parte</label><input class="finput" id="activo-parte" placeholder="Part Number"></div>
+        <div class="fgroup"><label>Código Contable</label><input class="finput" id="activo-codigo-contable" placeholder="Código contable del activo"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Estado</label>
+          <select class="fselect" id="activo-estado" onchange="toggleUbicacion('activo-estado','activo-ubicacion-wrap')">
+            <option value="disponible">Disponible</option>
+            <option value="asignado">Asignado</option>
+            <option value="mantenimiento_correctivo">Mantenimiento Correctivo</option>
+            <option value="en_reparacion">En Reparación</option>
+            <option value="en_garantia">En Garantía</option>
+            <option value="retirado">Retirado</option>
+          </select>
+          <small id="activo-estado-nota" style="display:none;color:var(--amber);font-size:10px;margin-top:4px"></small>
+          <span id="activo-estado-hint" style="display:none;font-size:10px;color:var(--text3);margin-top:4px"><i class="ti ti-info-circle"></i> El estado se modifica con el botón "Cambio de estado"</span></div>
+        <div class="fgroup" id="activo-ubicacion-wrap"><label>Ubicación *</label>
+          <select class="fselect" id="activo-ubicacion"><option value="">Seleccionar...</option></select>
+          <small id="activo-ubicacion-hint" style="display:none;color:var(--amber);font-size:10px;margin-top:4px">Esta empresa no tiene ubicaciones en el catálogo. Agrégalas en Administración → Catálogos.</small></div>
+      </div>
+
+      <!-- Grupos dinámicos por tipo de activo -->
+      <div class="campo-grupo" id="grp-pc" style="display:none">
+        <div class="campo-grupo-titulo">Especificaciones técnicas</div>
+        <div class="frow cols2">
+          <div class="fgroup"><label>Procesador</label><input class="finput" id="activo-procesador" placeholder="Intel Core i5-1235U..."></div>
+          <div class="fgroup"><label>Memoria RAM</label><input class="finput" id="activo-ram" placeholder="16 GB DDR4"></div>
+        </div>
+        <div class="frow cols2">
+          <div class="fgroup"><label>Disco 1</label><input class="finput" id="activo-disco1" placeholder="512 GB SSD NVMe"></div>
+          <div class="fgroup"><label>Disco 2</label><input class="finput" id="activo-disco2" placeholder="Opcional"></div>
+        </div>
+      </div>
+
+      <div class="campo-grupo" id="grp-pantalla" style="display:none">
+        <div class="campo-grupo-titulo">Pantalla</div>
+        <div class="frow cols3">
+          <div class="fgroup"><label>Tamaño pantalla</label><input class="finput" id="activo-tamano" placeholder='27", 55"...'></div>
+          <div class="fgroup"><label>Resolución</label><input class="finput" id="activo-resolucion" placeholder="1920×1080, 4K..."></div>
+          <div class="fgroup"><label>Tipo conexión</label><input class="finput" id="activo-conexion" placeholder="HDMI, DisplayPort..."></div>
+        </div>
+      </div>
+
+      <div class="campo-grupo" id="grp-movil" style="display:none">
+        <div class="campo-grupo-titulo">Dispositivo móvil</div>
+        <div class="frow cols2">
+          <div class="fgroup"><label>IMEI</label><input class="finput" id="activo-imei" placeholder="IMEI del dispositivo"></div>
+          <div class="fgroup"><label>N° Teléfono</label><input class="finput" id="activo-numtel" placeholder="Número asignado"></div>
+        </div>
+        <div class="frow cols2">
+          <div class="fgroup"><label>Capacidad almacenamiento</label><input class="finput" id="activo-capacidad" placeholder="128 GB, 256 GB..."></div>
+          <div class="fgroup"><label>Color</label><input class="finput" id="activo-color" placeholder="Negro, Blanco..."></div>
+        </div>
+      </div>
+
+      <div class="campo-grupo" id="grp-impresora" style="display:none">
+        <div class="campo-grupo-titulo">Impresora / Escáner</div>
+        <div class="frow">
+          <div class="fgroup"><label>Tipo impresora</label><input class="finput" id="activo-tipo-impresora" placeholder="Láser, Inyección de tinta, Multifuncional..."></div>
+        </div>
+      </div>
+
+      <div class="campo-grupo" id="grp-camara" style="display:none">
+        <div class="campo-grupo-titulo">Cámara / DVR</div>
+        <div class="frow cols2">
+          <div class="fgroup"><label>Tipo cámara</label><input class="finput" id="activo-tipo-camara" placeholder="IP, Domo, Bullet, PTZ..."></div>
+          <div class="fgroup"><label>Canales DVR</label><input class="finput" id="activo-canales-dvr" type="number" min="1" placeholder="4, 8, 16..."></div>
+        </div>
+      </div>
+
+      <div class="campo-grupo" id="grp-diadema" style="display:none">
+        <div class="campo-grupo-titulo">Diadema</div>
+        <div class="frow">
+          <div class="fgroup"><label>Con micrófono</label>
+            <select class="fselect" id="activo-microfono">
+              <option value="">—</option>
+              <option value="true">Sí</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="campo-grupo" id="grp-telefono" style="display:none">
+        <div class="campo-grupo-titulo">Teléfono fijo</div>
+        <div class="frow cols3">
+          <div class="fgroup"><label>Extensión</label><input class="finput" id="activo-extension" placeholder="101, 202..."></div>
+          <div class="fgroup"><label>Línea</label><input class="finput" id="activo-linea" placeholder="Número de línea"></div>
+          <div class="fgroup"><label>Tipo teléfono</label><input class="finput" id="activo-tipo-telefono" placeholder="IP, Analógico..."></div>
+        </div>
+      </div>
+
+      <div class="campo-grupo" id="grp-red" style="display:none">
+        <div class="campo-grupo-titulo">Red</div>
+        <div class="frow">
+          <div class="fgroup"><label>IP Dispositivo</label><input class="finput" id="activo-ip" placeholder="192.168.x.x"></div>
+        </div>
+      </div>
+
+      <div class="campo-grupo" id="grp-ups" style="display:none">
+        <div class="campo-grupo-titulo">UPS</div>
+        <div class="frow cols2">
+          <div class="fgroup"><label>Capacidad</label><input class="finput" id="activo-capacidad-ups" placeholder="600VA, 1000VA..."></div>
+          <div class="fgroup"><label>Tiempo respaldo</label><input class="finput" id="activo-respaldo-ups" placeholder="15 min, 30 min..."></div>
+        </div>
+      </div>
+
+      <div class="fsection" style="margin-top:16px">Ciclo de vida</div>
+      <div class="frow cols3">
+        <div class="fgroup"><label>Fecha de compra</label><input class="finput" id="activo-fecha-compra" type="date" onchange="_obsRecalc();_garRecalc()"></div>
+        <div class="fgroup"><label>Fecha obsolescencia</label><input class="finput" id="activo-fecha-obs" type="date" oninput="_obsMarcarManual()">
+          <small id="activo-obs-hint" style="display:none;color:var(--cyan);font-size:10px;margin-top:4px"></small></div>
+        <div class="fgroup"><label>Costo</label><input class="finput" id="activo-costo" type="number" placeholder="0.00"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Garantía (meses)</label>
+          <input class="finput" id="activo-garantia-meses" type="number" min="0" placeholder="Ej: 12" oninput="_garRecalc()"></div>
+        <div class="fgroup"><label>Fin de garantía</label>
+          <input class="finput" id="activo-garantia-fin" type="date" oninput="_garMarcarManual()">
+          <small id="activo-garantia-hint" style="display:none;color:var(--cyan);font-size:10px;margin-top:4px"></small>
+          <small style="color:var(--text3);font-size:10px;margin-top:4px;display:block">Se calcula automáticamente desde la fecha de compra. Puedes ajustarla.</small></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Observaciones</label><textarea class="ftextarea" id="activo-observaciones" placeholder="Notas adicionales..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-activo')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-guardar-activo" onclick="guardarActivo()">Guardar activo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ACCESORIO -->
+<div class="modal-overlay" id="modal-accesorio">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-acc-title">Nuevo accesorio</h3>
+      <div style="display:flex;gap:8px;margin-left:auto;align-items:center">
+        <button class="btn btn-ghost btn-sm" id="acc-etq-link" style="display:none" onclick="_etiquetaDesdeModalAccesorio()" title="Imprimir etiqueta"><i class="ti ti-qrcode"></i> Etiqueta</button>
+        <button class="modal-close" onclick="cerrarModal('modal-accesorio')">×</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="acc-id">
+      <div id="acc-readonly-banner" style="display:none;align-items:center;gap:8px;padding:10px 12px;margin-bottom:14px;border-radius:8px;background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.35);color:var(--red);font-size:12px">
+        <i class="ti ti-lock"></i> Accesorio retirado — solo lectura. La información puede consultarse pero no modificarse.
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Empresa *</label>
+          <select class="fselect" id="acc-empresa" onchange="onCambioEmpresaAccesorio()"><option value="">Seleccionar...</option></select></div>
+        <div class="fgroup"><label>Tipo de accesorio *</label>
+          <select class="fselect" id="acc-tipo">
+            <option value="">Seleccionar...</option>
+          </select></div>
+      </div>
+      <div class="frow cols3">
+        <div class="fgroup"><label>Marca</label><input class="finput" id="acc-marca" placeholder="Logitech..."></div>
+        <div class="fgroup"><label>Modelo</label><input class="finput" id="acc-modelo" placeholder="MX Master..."></div>
+        <div class="fgroup"><label>Serial</label><input class="finput" id="acc-serial" placeholder="Número de serie"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Estado</label>
+          <select class="fselect" id="acc-estado" onchange="toggleUbicacion('acc-estado','acc-ubicacion-wrap')">
+            <option value="disponible">Disponible</option>
+            <option value="asignado">Asignado</option>
+            <option value="mantenimiento_correctivo">Mantenimiento Correctivo</option>
+            <option value="en_reparacion">En Reparación</option>
+            <option value="en_garantia">En Garantía</option>
+            <option value="retirado">Retirado</option>
+          </select>
+          <small id="acc-estado-nota" style="display:none;color:var(--amber);font-size:10px;margin-top:4px"></small>
+          <span id="acc-estado-hint" style="display:none;font-size:10px;color:var(--text3);margin-top:4px"><i class="ti ti-info-circle"></i> El estado se modifica con el botón "Cambio de estado"</span></div>
+        <div class="fgroup" id="acc-ubicacion-wrap"><label>Ubicación *</label>
+          <select class="fselect" id="acc-ubicacion"><option value="">Seleccionar...</option></select>
+          <small id="acc-ubicacion-hint" style="display:none;color:var(--amber);font-size:10px;margin-top:4px">Esta empresa no tiene ubicaciones en el catálogo. Agrégalas en Administración → Catálogos.</small></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Observaciones</label><input class="finput" id="acc-obs" placeholder="Opcional..."></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Garantía (meses)</label>
+          <input class="finput" id="acc-garantia-meses" type="number" min="0" placeholder="Ej: 12" oninput="_garRecalcAcc()"></div>
+        <div class="fgroup"><label>Fin de garantía</label>
+          <input class="finput" id="acc-garantia-fin" type="date" oninput="_garMarcarManualAcc()">
+          <small id="acc-garantia-hint" style="display:none;color:var(--cyan);font-size:10px;margin-top:4px"></small>
+          <small style="color:var(--text3);font-size:10px;margin-top:4px;display:block">Se calcula automáticamente desde hoy. Puedes ajustarla.</small></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-accesorio')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-guardar-accesorio" onclick="guardarAccesorio()">Guardar accesorio</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESERVA -->
+<div class="modal-overlay" id="modal-reserva">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3>Nueva reserva</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-reserva')" style="margin-left:auto">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:14px;border-radius:8px;background:rgba(84,160,255,0.10);border:1px solid rgba(84,160,255,0.30);color:#54A0FF;font-size:12px">
+        <i class="ti ti-bookmark"></i> Aparta recursos disponibles para un ingreso. Pasan a estado "reservado" hasta que se asignen, se cancele la reserva, o venza la fecha límite.
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>N° de alta / destino *</label>
+          <input class="finput" id="reserva-alta" placeholder="Ej: ALTA-2026-045"></div>
+        <div class="fgroup"><label>Fecha límite *</label>
+          <input class="finput" id="reserva-fecha-limite" type="date"></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Descripción / Observaciones</label>
+          <textarea class="ftextarea" id="reserva-desc" placeholder="Para quién, área, cargo del nuevo ingreso..."></textarea></div>
+      </div>
+      <div class="fsection" style="margin-top:14px">Agregar recursos disponibles</div>
+      <div class="frow cols3" style="align-items:end">
+        <div class="fgroup"><label>Tipo</label>
+          <select class="fselect" id="reserva-tipo-recurso" onchange="buscarRecursoReserva()">
+            <option value="activo">Activo</option>
+            <option value="accesorio">Accesorio</option></select></div>
+        <div class="fgroup" style="grid-column:span 2"><label>Buscar por placa, serial o modelo</label>
+          <input class="finput" id="reserva-buscar-input" placeholder="Escribe para buscar disponibles..." oninput="buscarRecursoReserva()"></div>
+      </div>
+      <div id="reserva-buscar-results" style="max-height:170px;overflow:auto;border:0.5px solid var(--border);border-radius:7px;margin-bottom:14px"></div>
+      <div class="fsection">Seleccionados (<span id="reserva-items-count">0</span>)</div>
+      <div id="reserva-items-list" style="margin-top:6px"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-reserva')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarReserva()">Crear reserva</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR RESERVA (fecha límite / descripción) -->
+<div class="modal-overlay" id="modal-editar-reserva">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Editar reserva — <span id="editar-reserva-alta"></span></h3>
+      <button class="modal-close" onclick="cerrarModal('modal-editar-reserva')" style="margin-left:auto">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editar-reserva-id">
+      <div class="frow">
+        <div class="fgroup"><label>Fecha límite *</label>
+          <input class="finput" id="editar-reserva-fecha" type="date"></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Descripción / Observaciones</label>
+          <textarea class="ftextarea" id="editar-reserva-desc" placeholder="Para quién, área, cargo..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-editar-reserva')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEditarReserva()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EMPLEADO -->
+<div class="modal-overlay" id="modal-usuario">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-usr-title">Nuevo empleado</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-usuario')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="usr-id">
+      <div class="frow cols2">
+        <div class="fgroup"><label>Empresa *</label>
+          <select class="fselect" id="usr-empresa" onchange="onCambioEmpresaUsuario()"><option value="">Seleccionar...</option></select></div>
+        <div class="fgroup"><label>Cédula *</label><input class="finput" id="usr-cedula" placeholder="Número de documento"></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Nombre completo *</label><input class="finput" id="usr-nombre" placeholder="Nombre y apellidos"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Cargo</label><input class="finput" id="usr-cargo" placeholder="Analista, Coordinador..."></div>
+        <div class="fgroup"><label>Área</label><input class="finput" id="usr-area" placeholder="Tecnología, RRHH..."></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Unidad de Negocio</label><input class="finput" id="usr-unidad-negocio" placeholder="Comercial, Operaciones..."></div>
+        <div class="fgroup"><label>Sede</label>
+          <select class="fselect" id="usr-sede"><option value="">Seleccionar...</option></select></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Correo</label><input class="finput" id="usr-correo" type="email" placeholder="correo@empresa.com"></div>
+        <div class="fgroup"><label>Teléfono</label><input class="finput" id="usr-telefono" placeholder="3001234567"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Estado</label>
+          <select class="fselect" id="usr-estado">
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+            <option value="retirado">Retirado</option>
+          </select></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-usuario')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarUsuario()">Guardar empleado</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EMPRESA -->
+<div class="modal-overlay" id="modal-empresa">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-emp-title">Nueva empresa</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-empresa')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="emp-id">
+      <div class="frow cols2">
+        <div class="fgroup"><label>NIT *</label><input class="finput" id="emp-nit" placeholder="900.123.456-7"></div>
+        <div class="fgroup"><label>Prefijo de placa *</label><input class="finput" id="emp-prefijo" placeholder="SC, AA, GT..." maxlength="5" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+          <span style="font-size:10px;color:var(--text3);margin-top:3px;display:block">Ej: SC → SC0001 / SCA0001</span></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Razón social *</label><input class="finput" id="emp-nombre" placeholder="Nombre de la empresa"></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup">
+          <label>Logo de la empresa <span id="emp-logo-req">*</span></label>
+          <div style="display:flex;align-items:center;gap:14px;margin-top:2px">
+            <img id="emp-logo-preview" src="" alt="" style="display:none;max-height:60px;max-width:150px;border:1px solid var(--border2);border-radius:8px;padding:4px;background:#fff;object-fit:contain">
+            <input class="finput" id="emp-logo" type="file" accept="image/*" onchange="previewLogoEmpresa(this)" style="flex:1">
+          </div>
+          <span id="emp-logo-hint" style="font-size:10px;color:var(--text3);margin-top:4px;display:block">Imagen PNG o JPG. Aparecerá en las actas de la empresa.</span>
+        </div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Ciudad</label><input class="finput" id="emp-ciudad" placeholder="Medellín, Bogotá..."></div>
+        <div class="fgroup"><label>Teléfono</label><input class="finput" id="emp-telefono" placeholder="6042345678"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Correo</label><input class="finput" id="emp-correo" type="email" placeholder="contacto@empresa.com"></div>
+        <div class="fgroup"><label>Dirección</label><input class="finput" id="emp-direccion" placeholder="Calle 50 #38-35"></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Sedes</label>
+          <div style="display:flex;gap:8px">
+            <input class="finput" id="emp-sede-input" placeholder="Ej: Sede Principal, Bogotá, Medellín..." style="flex:1"
+                   onkeydown="if(event.key==='Enter'){event.preventDefault();agregarSedeEmp();}">
+            <button type="button" class="btn btn-ghost" onclick="agregarSedeEmp()" style="white-space:nowrap;flex-shrink:0">+ Agregar</button>
+          </div>
+          <span style="font-size:10px;color:var(--text3);margin-top:3px;display:block">Estas sedes aparecerán como opciones al crear o editar un empleado.</span>
+          <div id="emp-sedes-lista" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+        </div>
+      </div>
+      <div class="frow" id="emp-relaciones-wrap" style="display:none">
+        <div class="fgroup"><label>Empresas con relación (hermanas)</label>
+          <div id="emp-relaciones-lista" style="display:flex;flex-direction:column;gap:6px;margin-top:4px;max-height:170px;overflow:auto;border:0.5px solid var(--border);border-radius:8px;padding:8px"></div>
+          <span style="font-size:10px;color:var(--text3);margin-top:6px;display:block">Marca las empresas cuyos empleados pueden usar recursos de esta empresa y viceversa. La relación se aplica en ambos sentidos automáticamente.</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-empresa')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEmpresa()">Guardar empresa</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SERVIDOR (crear/editar) -->
+<div class="modal-overlay" id="modal-servidor">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3 id="modal-srv-titulo">Nuevo Servidor</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-servidor')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="fsection">Identificación</div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Nombre *</label><input class="finput" id="srv-nombre" placeholder="Nombre descriptivo"></div>
+        <div class="fgroup"><label>Hostname *</label><input class="finput" id="srv-hostname" placeholder="srv-prod-01.empresa.com" style="font-family:var(--mono)"></div>
+      </div>
+      <div class="frow cols3">
+        <div class="fgroup"><label>ID Servicio</label><input class="finput" id="srv-id-servicio" placeholder="ID externo"></div>
+        <div class="fgroup"><label>Kawak ID</label><input class="finput" id="srv-kawak-id" placeholder="ID en Kawak"></div>
+        <div class="fgroup"><label>GLPI ID</label><input class="finput" id="srv-glpi-id" placeholder="ID en GLPI"></div>
+      </div>
+      <div class="fsection" style="margin-top:16px">Clasificación</div>
+      <div class="frow cols3">
+        <div class="fgroup"><label>Tipo</label><select class="fselect" id="srv-tipo"></select></div>
+        <div class="fgroup"><label>Ambiente</label><select class="fselect" id="srv-ambiente"></select></div>
+        <div class="fgroup"><label>Criticidad</label><select class="fselect" id="srv-criticidad"></select></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Estado</label><select class="fselect" id="srv-estado"></select></div>
+        <div class="fgroup"><label>Ubicación</label><select class="fselect" id="srv-ubicacion"></select></div>
+      </div>
+      <div class="fsection" style="margin-top:16px">Hardware / SO</div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Sistema Operativo</label><select class="fselect" id="srv-so"></select></div>
+        <div class="fgroup"><label>Procesador</label><input class="finput" id="srv-procesador" placeholder="Intel Xeon E5-2680v4"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>RAM</label><input class="finput" id="srv-ram" placeholder="128 GB DDR4 ECC"></div>
+        <div class="fgroup"><label>Disco</label><input class="finput" id="srv-disco" placeholder="2×960 GB SSD + 4×2 TB HDD"></div>
+      </div>
+      <div class="fsection" style="margin-top:16px">Red</div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>IP LAN</label><input class="finput" id="srv-ip-lan" placeholder="192.168.1.10" style="font-family:var(--mono)"></div>
+        <div class="fgroup"><label>IP Salida</label><input class="finput" id="srv-ip-salida" placeholder="200.21.30.5" style="font-family:var(--mono)"></div>
+      </div>
+      <div class="fsection" style="margin-top:16px">Aplicabilidad por empresa</div>
+      <div class="frow">
+        <div class="fgroup">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:400">
+            <input type="radio" name="srv-aplic-modo" value="especificas" id="srv-aplic-especificas" onchange="_srvToggleAplic()" checked>
+            Empresas específicas
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:400;margin-top:4px">
+            <input type="radio" name="srv-aplic-modo" value="todas" id="srv-aplic-todas" onchange="_srvToggleAplic()">
+            Aplica a todas las empresas
+          </label>
+        </div>
+      </div>
+      <div class="frow" id="srv-aplic-checklist-wrap">
+        <div class="fgroup">
+          <label>Empresas a las que aplica <span style="color:var(--text3);font-weight:400">(la empresa dueña queda siempre marcada)</span></label>
+          <div id="srv-aplic-checklist" style="display:flex;flex-wrap:wrap;gap:10px;padding:8px 0"></div>
+        </div>
+      </div>
+      <div class="fsection" style="margin-top:16px">Notas</div>
+      <div class="frow">
+        <div class="fgroup"><label>Observaciones</label><textarea class="ftextarea" id="srv-observaciones" placeholder="Información adicional del servidor..."></textarea></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Pendientes</label><textarea class="ftextarea" id="srv-pendientes" placeholder="Tareas pendientes, configuraciones por hacer..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-servidor')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarServidor()">Guardar servidor</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE SERVIDOR (tabs) -->
+<div class="modal-overlay" id="modal-detalle-servidor">
+  <div class="modal" style="width:90vw;max-width:1000px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="modal-head" style="flex-shrink:0">
+      <h3 style="font-size:14px">Detalle del Servidor</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-detalle-servidor')">×</button>
+    </div>
+    <div style="flex-shrink:0;padding:0 20px;border-bottom:1px solid var(--border);display:flex;gap:6px">
+      <button class="tab tab-btn active" data-tab="general"      onclick="_switchTabDetalle('general')">General</button>
+      <button class="tab tab-btn"        data-tab="herramientas" onclick="_switchTabDetalle('herramientas')">Herramientas</button>
+      <button class="tab tab-btn"        data-tab="servicios"    onclick="_switchTabDetalle('servicios')">Servicios</button>
+      <button class="tab tab-btn"        data-tab="historial"    onclick="_switchTabDetalle('historial')">Historial</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:16px 20px">
+      <div data-panel="general"      id="detalle-srv-general"></div>
+      <div data-panel="herramientas" id="detalle-srv-herramientas" style="display:none"></div>
+      <div data-panel="servicios"    id="detalle-srv-servicios"    style="display:none"></div>
+      <div data-panel="historial"    id="detalle-srv-historial"    style="display:none"></div>
+    </div>
+    <div class="modal-foot" style="flex-shrink:0">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-detalle-servidor')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DAR DE BAJA SERVIDOR -->
+<div class="modal-overlay" id="modal-baja-servidor">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <h3 style="font-size:14px">Dar de baja servidor</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-baja-servidor')">×</button>
+    </div>
+    <div style="padding:16px 20px">
+      <p style="font-size:12px;color:var(--muted);margin:0 0 12px">
+        El servidor se marcará como <strong>dado de baja</strong> y saldrá de la lista de vigentes.
+        El registro se conserva y podrás consultarlo con el filtro «Dados de baja».
+      </p>
+      <div class="fgroup">
+        <label>Motivo de la baja *</label>
+        <textarea id="srv-baja-motivo" class="finput" rows="4"
+                  placeholder="Ej.: VM eliminada, no llegó a producción…"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-baja-servidor')">Cancelar</button>
+      <button class="btn btn-primary" style="background:var(--danger)" onclick="confirmarBajaServidor()">Dar de baja</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODALES COMPRAS ══════════════════════════════════════ -->
+
+<!-- MODAL PROVEEDOR -->
+<div class="modal-overlay" id="modal-proveedor">
+  <div class="modal">
+    <div class="modal-head"><h3>Nuevo proveedor</h3><button class="modal-close" onclick="cerrarModal('modal-proveedor')">×</button></div>
+    <div class="modal-body">
+      <div class="frow cols2">
+        <div class="fgroup"><label>Nombre *</label><input class="finput" id="prov-nombre" placeholder="Razón social"></div>
+        <div class="fgroup"><label>Tipo *</label><select class="fselect" id="prov-tipo"><option value="vendedor">Vendedor</option><option value="arrendador">Arrendador</option><option value="fabricante">Fabricante</option></select></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>NIT</label><input class="finput" id="prov-nit" placeholder="900.123.456-7"></div>
+        <div class="fgroup"><label>Ciudad</label><input class="finput" id="prov-ciudad"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Contacto</label><input class="finput" id="prov-contacto"></div>
+        <div class="fgroup"><label>Teléfono</label><input class="finput" id="prov-telefono"></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Correo</label><input class="finput" id="prov-correo" type="email"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModal('modal-proveedor')">Cancelar</button><button class="btn btn-primary" onclick="guardarProveedor()">Guardar</button></div>
+  </div>
+</div>
+
+<!-- MODAL PROVEEDOR (maestro — Catálogos › Proveedores; catálogo compartido + módulos) -->
+<div class="modal-overlay" id="modal-proveedor-master">
+  <div class="modal">
+    <div class="modal-head"><h3 id="provm-title">Nuevo proveedor</h3><button class="modal-close" onclick="cerrarModal('modal-proveedor-master')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="provm-id">
+      <div class="frow cols2">
+        <div class="fgroup"><label>Nombre *</label><input class="finput" id="provm-nombre" placeholder="Razón social"></div>
+        <div class="fgroup"><label>Tipo *</label><select class="fselect" id="provm-tipo"><option value="vendedor">Vendedor</option><option value="arrendador">Arrendador</option><option value="fabricante">Fabricante</option></select></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>NIT</label><input class="finput" id="provm-nit" placeholder="900.123.456-7"></div>
+        <div class="fgroup"><label>Ciudad</label><input class="finput" id="provm-ciudad"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Contacto</label><input class="finput" id="provm-contacto"></div>
+        <div class="fgroup"><label>Teléfono</label><input class="finput" id="provm-telefono"></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Correo</label><input class="finput" id="provm-correo" type="email"></div>
+      </div>
+      <div class="fgroup">
+        <label>Módulos * <span style="color:var(--text3);font-weight:400;text-transform:none">(a qué módulos aplica este proveedor)</span></label>
+        <div style="display:flex;gap:18px;margin-top:4px">
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:var(--text)"><input type="checkbox" id="provm-mod-compras" style="width:auto;margin:0"> Compras</label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:var(--text)"><input type="checkbox" id="provm-mod-impresoras" style="width:auto;margin:0"> Impresoras</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModal('modal-proveedor-master')">Cancelar</button><button class="btn btn-primary" onclick="guardarProveedorMaster()">Guardar</button></div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE SOLICITUD -->
+<div class="modal-overlay" id="modal-solicitud-detalle">
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3>Detalle de la solicitud</h3><button class="modal-close" onclick="cerrarModal('modal-solicitud-detalle')">×</button></div>
+    <div class="modal-body" id="sol-detalle-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-solicitud-detalle')">Cerrar</button>
+      <span id="sol-detalle-acciones" style="display:flex;gap:8px"></span>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SOLICITUD -->
+<div class="modal-overlay" id="modal-solicitud">
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3 id="modal-sol-title">Nueva solicitud de compra</h3><button class="modal-close" onclick="cerrarModal('modal-solicitud')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="sol-id">
+      <div class="frow cols2">
+        <div class="fgroup"><label>Empresa *</label><select class="fselect" id="sol-empresa" onchange="refrescarSedeAreaSolicitud()"><option value="">Seleccionar...</option></select></div>
+        <div class="fgroup"><label>Título *</label><input class="finput" id="sol-titulo" placeholder="Ej: Equipos para área comercial Q1 2025"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Sede *</label><select class="fselect" id="sol-sede"><option value="">Seleccionar...</option></select>
+          <div id="sol-sede-hint" style="display:none;font-size:11px;color:var(--amber);margin-top:4px">Esta empresa no tiene sedes en el catálogo. Agrégalas en Administración → Catálogos.</div></div>
+        <div class="fgroup"><label>Área *</label><select class="fselect" id="sol-area"><option value="">Seleccionar...</option></select>
+          <div id="sol-area-hint" style="display:none;font-size:11px;color:var(--amber);margin-top:4px">Esta empresa no tiene áreas en el catálogo. Agrégalas en Administración → Catálogos.</div></div>
+      </div>
+      <div class="frow"><div class="fgroup"><label>Justificación *</label><textarea class="ftextarea" id="sol-justificacion" placeholder="Motivo de la compra"></textarea></div></div>
+      <div class="frow"><div class="fgroup"><label>Observaciones</label><input class="finput" id="sol-observaciones"></div></div>
+      <div class="fsection" style="display:flex;justify-content:space-between;align-items:center">Ítems <button type="button" class="btn btn-ghost btn-sm" onclick="agregarItemSolicitud()">+ Agregar ítem</button></div>
+      <div id="sol-items-container"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModal('modal-solicitud')">Cancelar</button><button class="btn btn-primary" onclick="guardarSolicitud()">Guardar solicitud</button></div>
+  </div>
+</div>
+
+<!-- MODAL COTIZACIÓN -->
+<div class="modal-overlay" id="modal-cotizacion">
+  <div class="modal">
+    <div class="modal-head"><h3>Agregar cotización</h3><button class="modal-close" onclick="cerrarModal('modal-cotizacion')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="cot-solicitud-id">
+      <div class="frow"><div class="fgroup"><label>Proveedor *</label><select class="fselect" id="cot-proveedor"><option value="">Seleccionar...</option></select></div></div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Referencia / N.º cotización <span style="color:var(--text3);font-weight:400;text-transform:none">(opcional)</span></label><input class="finput" id="cot-referencia"></div>
+        <div class="fgroup"><label>Valor total</label><input class="finput" id="cot-valor" type="number" min="0" step="0.01"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Fecha</label><input class="finput" id="cot-fecha" type="date"></div>
+        <div class="fgroup"><label>Archivo * <span style="color:var(--text3);font-weight:400;text-transform:none">(pdf, imagen o email — máx 10 MB)</span></label><input class="finput" id="cot-archivo" type="file" accept=".pdf,.png,.jpg,.jpeg,.eml,.msg"></div>
+      </div>
+      <div class="frow"><div class="fgroup"><label>Observaciones <span style="color:var(--text3);font-weight:400;text-transform:none">(opcional)</span></label><input class="finput" id="cot-observaciones"></div></div>
+      <div id="cot-msg" style="display:none;font-size:12px;border-radius:8px;padding:8px 12px;margin-top:6px"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModal('modal-cotizacion')">Cancelar</button><button class="btn btn-primary" onclick="guardarCotizacion()">Guardar cotización</button></div>
+  </div>
+</div>
+
+<!-- MODAL ORDEN DE COMPRA -->
+<div class="modal-overlay" id="modal-orden">
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3>Nueva orden de compra</h3><button class="modal-close" onclick="cerrarModal('modal-orden')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="oc-solicitud-id">
+      <div style="font-size:12px;color:var(--cyan);margin-bottom:12px" id="oc-solicitud-info"></div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Proveedor *</label><select class="fselect" id="oc-proveedor"></select></div>
+        <div class="fgroup"><label>Tipo *</label><select class="fselect" id="oc-tipo" onchange="toggleCamposAlquilerOC()"><option value="compra">Compra</option><option value="alquiler">Alquiler</option></select></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Número OC</label><input class="finput" id="oc-numero" value="Se generará automáticamente (OC-AAAA-NNN)" readonly disabled style="color:var(--text3);font-style:italic"></div>
+        <div class="fgroup"><label>Número de orden ERP <span style="color:var(--text3);font-weight:400;text-transform:none">(opcional)</span></label><input class="finput" id="oc-erp" placeholder="N.º de orden del ERP/contable"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Valor total</label><input class="finput" id="oc-valor" type="number" min="0" step="0.01"></div>
+        <div class="fgroup"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Fecha emisión *</label><input class="finput" id="oc-fecha-emision" type="date"></div>
+        <div class="fgroup"><label>Entrega esperada</label><input class="finput" id="oc-fecha-entrega" type="date"></div>
+      </div>
+      <div id="oc-campos-alquiler" style="display:none">
+        <div class="fsection">Datos de alquiler</div>
+        <div class="frow cols3">
+          <div class="fgroup"><label>Inicio</label><input class="finput" id="oc-fecha-inicio" type="date"></div>
+          <div class="fgroup"><label>Fin</label><input class="finput" id="oc-fecha-fin" type="date"></div>
+          <div class="fgroup"><label>Valor mensual</label><input class="finput" id="oc-valor-mensual" type="number" min="0" step="0.01"></div>
+        </div>
+      </div>
+      <div class="frow"><div class="fgroup"><label>Observaciones</label><input class="finput" id="oc-observaciones"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModal('modal-orden')">Cancelar</button><button class="btn btn-primary" onclick="guardarOrden()">Crear OC</button></div>
+  </div>
+</div>
+
+<!-- MODAL FACTURA -->
+<div class="modal-overlay" id="modal-factura">
+  <div class="modal">
+    <div class="modal-head"><h3>Nueva factura</h3><button class="modal-close" onclick="cerrarModal('modal-factura')">×</button></div>
+    <div class="modal-body">
+      <div class="frow"><div class="fgroup"><label>Orden de compra *</label><select class="fselect" id="fac-orden"></select></div></div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Número factura *</label><input class="finput" id="fac-numero"></div>
+        <div class="fgroup"><label>Fecha factura *</label><input class="finput" id="fac-fecha" type="date"></div>
+      </div>
+      <div class="frow cols3">
+        <div class="fgroup"><label>Subtotal</label><input class="finput" id="fac-subtotal" type="number" min="0" step="0.01"></div>
+        <div class="fgroup"><label>IVA</label><input class="finput" id="fac-iva" type="number" min="0" step="0.01"></div>
+        <div class="fgroup"><label>Valor total *</label><input class="finput" id="fac-total" type="number" min="0" step="0.01"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Vencimiento</label><input class="finput" id="fac-vencimiento" type="date"></div>
+        <div class="fgroup"><label>Observaciones</label><input class="finput" id="fac-observaciones"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModal('modal-factura')">Cancelar</button><button class="btn btn-primary" onclick="guardarFactura()">Guardar factura</button></div>
+  </div>
+</div>
+
+<!-- MODAL RECEPCION -->
+<div class="modal-overlay" id="modal-recepcion">
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3>Registrar recepción</h3><button class="modal-close" onclick="cerrarModal('modal-recepcion')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="rec-orden-id">
+      <div style="font-size:12px;color:var(--cyan);margin-bottom:10px" id="rec-orden-info"></div>
+      <div class="frow cols2"><div class="fgroup"><label>Fecha recepción *</label><input class="finput" id="rec-fecha" type="date"></div></div>
+      <div class="fsection">Ítems recibidos</div>
+      <div id="rec-items-container"></div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Observaciones</label><input class="finput" id="rec-observaciones"></div>
+        <div class="fgroup"><label>Novedades</label><input class="finput" id="rec-novedades"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModal('modal-recepcion')">Cancelar</button><button class="btn btn-primary" onclick="guardarRecepcion()">Guardar recepción</button></div>
+  </div>
+</div>
+
+<!-- MODAL CREAR INVENTARIO -->
+<div class="modal-overlay" id="modal-crear-inventario">
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3>Crear inventario desde recepción</h3><button class="modal-close" onclick="cerrarModalCrearInventario()">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="ci-recepcion-id"><input type="hidden" id="ci-empresa-id">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text3)">Crea cada unidad con su información completa. Solo se listan los ítems recibidos OK.</div>
+        <div id="ci-progreso" style="font-size:11px;color:var(--cyan);font-weight:600"></div>
+      </div>
+      <div id="ci-items-container"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModalCrearInventario()">Cerrar</button></div>
+  </div>
+</div>
+
+<!-- MODAL GARANTIA -->
+
+<!-- MODAL TERMINAR CONTRATO -->
+<div class="modal-overlay" id="modal-contrato-terminar">
+  <div class="modal">
+    <div class="modal-head"><h3>Terminar contrato de alquiler</h3><button class="modal-close" onclick="cerrarModal('modal-contrato-terminar')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="ct-id">
+      <div id="ct-equipos" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:12px"></div>
+      <div class="frow"><div class="fgroup"><label>Fecha de devolución real *</label><input class="finput" id="ct-fecha" type="date"></div></div>
+      <div class="frow"><div class="fgroup"><label>Observaciones de devolución</label><textarea class="ftextarea" id="ct-observaciones"></textarea></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModal('modal-contrato-terminar')">Cancelar</button><button class="btn btn-primary" onclick="guardarTerminarContrato()">Terminar contrato</button></div>
+  </div>
+</div>
+
+<!-- MODAL HOJA DE VIDA DEL ACTIVO -->
+<div class="modal-overlay" id="modal-hoja-vida">
+  <div class="modal" style="width:92vw;max-width:980px;max-height:92vh;display:flex;flex-direction:column">
+    <div class="modal-head" style="flex-shrink:0">
+      <h3 id="hv-modal-title">Hoja de vida del activo</h3>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button class="btn btn-ghost btn-sm" id="hv-btn-export"><i class="ti ti-download"></i> Exportar</button>
+        <button class="modal-close" onclick="cerrarModal('modal-hoja-vida')">×</button>
+      </div>
+    </div>
+    <div id="hv-content" style="flex:1;overflow-y:auto;padding:16px;background:#0d1117">
+      <div style="text-align:center;color:var(--text3);padding:40px">Cargando expediente...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CAMBIO DE ESTADO -->
+<div class="modal-overlay" id="modal-cambio-estado">
+  <div class="modal" style="width:480px">
+    <div class="modal-head"><h3>Cambio de estado</h3><button class="modal-close" onclick="cerrarModal('modal-cambio-estado')">×</button></div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Nuevo estado para <strong id="ce-placa" style="color:var(--cyan)"></strong></div>
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button class="ce-destino-btn" data-destino="disponible" onclick="onSelectDestino('disponible')"><i class="ti ti-circle-check"></i> Disponible</button>
+        <button class="ce-destino-btn" data-destino="mantenimiento" onclick="onSelectDestino('mantenimiento')"><i class="ti ti-tool"></i> Mantenimiento</button>
+        <button class="ce-destino-btn" data-destino="retirado" onclick="onSelectDestino('retirado')"><i class="ti ti-trash"></i> Retirar</button>
+      </div>
+      <div id="ce-fields"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-cambio-estado')">Cancelar</button>
+      <button class="btn btn-primary" id="ce-guardar" onclick="guardarCambioEstado()" style="display:none">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FINALIZAR MANTENIMIENTO -->
+<div class="modal-overlay" id="modal-finalizar-mant">
+  <div class="modal" style="width:460px">
+    <div class="modal-head"><h3>Finalizar mantenimiento</h3><button class="modal-close" onclick="cerrarModal('modal-finalizar-mant')">×</button></div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Recurso <strong id="fm-placa" style="color:var(--cyan)"></strong></div>
+      <div id="fm-caso-a-info" style="display:none;background:rgba(0,229,160,0.06);border:0.5px solid rgba(0,229,160,0.25);border-radius:7px;padding:8px 10px;margin-bottom:12px;font-size:11px;color:var(--green)">
+        <i class="ti ti-user-check"></i> Al finalizar, el equipo volverá automáticamente a estado <strong>ASIGNADO</strong> con <strong id="fm-usuario-nombre"></strong>.
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Resultado</label>
+          <select class="fselect" id="fm-resultado"><option value="exitoso">Exitoso</option><option value="parcial">Parcial</option><option value="requiere_baja">Requiere baja / irreparable</option></select></div>
+        <div class="fgroup"><label>Costo real</label><input class="finput" id="fm-costo" type="number" step="0.01" min="0"></div>
+      </div>
+      <div class="fgroup" id="fm-destino-wrap"><label>Destino</label>
+        <select class="fselect" id="fm-destino" onchange="_fmToggleDestino()"><option value="disponible">Volver a disponible</option><option value="retirar">Dar de baja</option></select></div>
+      <div class="fgroup" id="fm-ubic-wrap"><label>Ubicación *</label>
+        <select class="fselect" id="fm-ubicacion"><option value="">Seleccionar...</option></select>
+        <small id="fm-ubicacion-hint" style="display:none;color:var(--amber);font-size:10px;margin-top:4px">Esta empresa no tiene ubicaciones en el catálogo. Agrégalas en Administración → Catálogos.</small></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-finalizar-mant')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarFinalizarMantenimiento()">Finalizar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SOLICITUD DE BAJA -->
+<div class="modal-overlay" id="modal-baja">
+  <div class="modal" style="width:500px">
+    <div class="modal-head"><h3>Solicitud de baja</h3><button class="modal-close" onclick="cerrarModal('modal-baja')">×</button></div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Recurso <strong id="baja-placa" style="color:var(--cyan)"></strong></div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Motivo *</label>
+          <select class="fselect" id="baja-motivo" onchange="_bajaToggleMotivo()">
+            <option value="retiro_operacion">Retiro de operación</option>
+            <option value="vendido">Venta</option>
+            <option value="donado">Donación</option>
+            <option value="destruido">Destrucción</option>
+            <option value="hurto">Hurto</option>
+            <option value="traslado">Traslado a otra empresa</option>
+            <option value="devuelto_proveedor" data-solo-alquiler="1">Devuelto a proveedor (alquiler)</option>
+          </select></div>
+        <div class="fgroup"><label>Estado físico</label><input class="finput" id="baja-estado-fisico" placeholder="Ej. dañado, obsoleto"></div>
+      </div>
+      <div class="fgroup"><label>Justificación *</label><textarea class="ftextarea" id="baja-justificacion" placeholder="Motivo detallado del retiro"></textarea></div>
+      <div id="baja-venta-wrap" style="display:none">
+        <div class="frow cols2">
+          <div class="fgroup"><label>Valor de venta</label><input class="finput" id="baja-valor-venta" type="number" step="0.01" min="0"></div>
+          <div class="fgroup"><label>Comprador</label><input class="finput" id="baja-comprador"></div>
+        </div>
+      </div>
+      <div id="baja-donado-wrap" style="display:none">
+        <div class="fgroup"><label>Entidad receptora</label><input class="finput" id="baja-entidad"></div>
+      </div>
+      <div id="baja-destruido-wrap" style="display:none">
+        <div class="fgroup"><label>Método de destrucción</label><input class="finput" id="baja-metodo"></div>
+      </div>
+      <div id="baja-hurto-wrap" style="display:none">
+        <div class="fgroup"><label>Número de denuncia / caso</label>
+          <input class="finput" id="baja-numero-denuncia" placeholder="N° de denuncia ante autoridades"></div>
+      </div>
+      <div id="baja-traslado-wrap" style="display:none">
+        <div class="fgroup"><label>Empresa destino *</label>
+          <select class="fselect" id="baja-empresa-destino"><option value="">Seleccionar...</option></select>
+          <small style="color:var(--text3);font-size:10px;margin-top:4px;display:block">
+            El equipo se da de baja en esta empresa. Recuerda crearlo en la empresa destino con su nueva placa.
+          </small></div>
+      </div>
+      <div style="font-size:10px;color:var(--amber);margin-top:4px"><i class="ti ti-alert-triangle"></i> La baja requiere aprobación de un administrador antes de retirar el recurso.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-baja')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarBaja()">Solicitar baja</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VIGENCIA / FECHA DE INGRESO -->
+<div class="modal-overlay" id="modal-vigencia">
+  <div class="modal" style="width:420px">
+    <div class="modal-head">
+      <h3>Configurar fecha de ingreso</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-vigencia')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="vig-acta-id">
+      <div class="fgroup" style="margin-bottom:14px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="vig-es-anticipada" onchange="toggleVigenciaFields()">
+          <span>Esta acta fue generada anticipadamente</span>
+        </label>
+        <small style="color:var(--text3);font-size:10px;margin-top:4px;display:block">
+          Marca esta opción si el acta se generó antes del ingreso del empleado a la empresa.
+        </small>
+      </div>
+      <div id="vig-fecha-wrap" style="display:none">
+        <div class="fgroup">
+          <label>Fecha de ingreso del empleado *</label>
+          <input type="date" class="finput" id="vig-fecha-inicio">
+          <small style="color:var(--text3);font-size:10px;margin-top:4px;display:block">
+            Los recordatorios de firma comenzarán 2 días después de esta fecha.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-vigencia')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarVigencia()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ROL -->
+<div class="modal-overlay" id="modal-rol">
+  <div class="modal" style="width:600px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="modal-head" style="flex-shrink:0">
+      <h3 id="rol-modal-title">Nuevo rol</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-rol')">×</button>
+    </div>
+    <div class="modal-body" style="flex:1;overflow-y:auto">
+      <input type="hidden" id="rol-modal-id">
+      <div class="frow cols2">
+        <div class="fgroup"><label>Nombre del rol *</label>
+          <input class="finput" id="rol-modal-nombre" placeholder="Ej: Soporte N2, Auditor externo...">
+          <span style="font-size:10px;color:var(--text3);margin-top:3px;display:block">Se normaliza a minúsculas con guiones bajos.</span></div>
+        <div class="fgroup"><label>Descripción</label>
+          <input class="finput" id="rol-modal-desc" placeholder="Descripción del rol"></div>
+      </div>
+      <div class="fsection" style="margin-top:8px">Permisos del rol</div>
+      <div id="rol-permisos-cont"></div>
+    </div>
+    <div class="modal-foot" style="flex-shrink:0">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-rol')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarRol()">Guardar rol</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CATÁLOGO -->
+<div class="modal-overlay" id="modal-catalogo">
+  <div class="modal" style="width:480px">
+    <div class="modal-head">
+      <h3 id="cat-modal-title">Nuevo valor</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-catalogo')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="cat-modal-id">
+      <input type="hidden" id="cat-modal-cat">
+      <div class="fgroup" style="margin-bottom:12px">
+        <label>Valor *</label>
+        <input class="finput" id="cat-modal-valor" placeholder="Ej: Tablet industrial, Coordinador TI...">
+      </div>
+      <div class="fgroup" style="margin-bottom:12px">
+        <label>Descripción</label>
+        <input class="finput" id="cat-modal-desc" placeholder="Descripción opcional...">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="fgroup">
+          <label>Orden</label>
+          <input class="finput" id="cat-modal-orden" type="number" min="0" placeholder="0">
+        </div>
+        <div class="fgroup">
+          <label>Color (hex, opcional)</label>
+          <input class="finput" id="cat-modal-color" placeholder="#06BFFF">
+        </div>
+      </div>
+      <div class="fgroup" id="cat-anios-wrap" style="display:none;margin-top:12px">
+        <label>Años de obsolescencia</label>
+        <input class="finput" id="cat-modal-anios" type="number" min="0" placeholder="Ej: 5">
+        <small style="color:var(--text3);font-size:10px;margin-top:4px;display:block">
+          Se usará para calcular automáticamente la fecha de obsolescencia al crear activos de este tipo.
+        </small>
+      </div>
+      <div class="fgroup" id="cat-red-wrap" style="display:none;margin-top:12px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="cat-modal-red" style="width:auto;margin:0">
+          <span>Es de red</span>
+        </label>
+        <small style="color:var(--text3);font-size:10px;margin-top:4px;display:block">
+          Si se marca, los activos de este tipo podrán montarse como dispositivos en el módulo de Redes (cuartos técnicos y racks).
+        </small>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-catalogo')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarValorCat()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CUSTODIO -->
+<div class="modal-overlay" id="modal-custodio">
+  <div class="modal" style="width:440px">
+    <div class="modal-head"><h3>🛡 Custodio del recurso</h3><button class="modal-close" onclick="cerrarModal('modal-custodio')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="cust-tipo"><input type="hidden" id="cust-id"><input type="hidden" id="cust-empresa">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">Recurso <strong id="cust-placa" style="color:var(--cyan)"></strong> · permanece <strong>Disponible</strong></div>
+      <div id="cust-actual" style="display:none;background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.3);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#2DD4BF"></div>
+      <div class="fgroup"><label>Cédula del custodio</label>
+        <input class="finput" id="cust-cedula" placeholder="Documento del empleado responsable" oninput="custBuscar()" autocomplete="off"></div>
+      <div id="cust-info" style="display:none;font-size:12px;margin-top:8px"></div>
+      <div style="font-size:10px;color:var(--text3);margin-top:8px">El custodio es responsable del recurso mientras está disponible en la sede. No cambia el estado ni genera acta. Puede ser de la empresa o de una relacionada.</div>
+      <div id="cust-msg" style="display:none"></div>
+    </div>
+    <div class="modal-foot" style="display:flex;align-items:center">
+      <button class="btn btn-ghost btn-sm" id="cust-btn-quitar" style="display:none;color:var(--red);border-color:rgba(255,77,109,.3)" onclick="quitarCustodio()">Quitar custodio</button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button class="btn btn-ghost" onclick="cerrarModal('modal-custodio')">Cancelar</button>
+        <button class="btn btn-primary" id="cust-btn-guardar" onclick="guardarCustodio()" disabled>Guardar custodio</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ETIQUETA -->
+<div class="modal-overlay" id="modal-etiqueta">
+  <div class="modal" style="width:420px">
+    <div class="modal-head">
+      <h3>Etiqueta para impresión</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-etiqueta')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;justify-content:center;margin-bottom:16px">
+        <div id="etiqueta-preview" class="etiqueta-label"></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:8px">
+        Vista previa de la etiqueta 38 × 25 mm
+      </div>
+      <div style="background:rgba(255,176,32,0.06);border:0.5px solid rgba(255,176,32,0.2);border-radius:7px;padding:10px;font-size:11px;color:var(--amber);margin-bottom:4px">
+        <i class="ti ti-info-circle"></i> Asegúrate de que la impresora Zebra GT800 esté seleccionada y el tamaño de papel configurado en 38×25mm antes de imprimir.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-etiqueta')">Cerrar</button>
+      <button class="btn btn-primary" onclick="imprimirEtiqueta()"><i class="ti ti-printer"></i> Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PLAN DE MANTENIMIENTO -->
+<div class="modal-overlay" id="modal-plan">
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3 id="modal-plan-title">Nuevo plan de mantenimiento</h3><button class="modal-close" onclick="cerrarModal('modal-plan')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="plan-id">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px"><i class="ti ti-world"></i> Plan <b>global</b> — aplica a todas las empresas para el tipo de activo seleccionado.</div>
+      <div class="frow">
+        <div class="fgroup"><label>Nombre *</label><input class="finput" id="plan-nombre" placeholder="Ej: Preventivo portátiles"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Periodicidad (meses)</label><input class="finput" id="plan-periodicidad" type="number" min="1" value="12"></div>
+        <div class="fgroup"><label>Descripción <span style="color:var(--text3);font-weight:400;text-transform:none">(opcional)</span></label><input class="finput" id="plan-descripcion"></div>
+      </div>
+
+      <div class="fgroup"><label>Tipos de activo cubiertos *</label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <select class="fselect" id="plan-tipo-sel"><option value="">Seleccionar tipo...</option></select>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="agregarTipoPlan()">+ Agregar</button>
+        </div>
+        <div id="plan-tipos-lista" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+      </div>
+
+      <div class="fsection">Datos del formato (acta)</div>
+      <div class="frow cols3">
+        <div class="fgroup"><label>Código formato</label><input class="finput" id="plan-codigo" value="FTIN09"></div>
+        <div class="fgroup"><label>Versión</label><input class="finput" id="plan-version" value="1.1"></div>
+        <div class="fgroup"><label>Fecha emisión</label><input class="finput" id="plan-fecha-emision" type="date"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Clasificación</label><input class="finput" id="plan-clasificacion" value="Interno"></div>
+        <div class="fgroup"><label>Proceso</label><input class="finput" id="plan-proceso" value="Servicio"></div>
+      </div>
+
+      <div class="fsection" style="display:flex;justify-content:space-between;align-items:center">
+        Checklist
+        <button type="button" class="btn btn-ghost btn-sm" onclick="agregarItemPlan()">+ Agregar ítem</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Sección (diagnóstico/hardware/software) · Tipo (check = Sí/No/N.A · dato = captura un valor) · Texto</div>
+      <div id="plan-checklist-container"></div>
+
+      <div id="plan-msg" style="display:none;font-size:12px;border-radius:8px;padding:8px 12px;margin-top:8px"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModal('modal-plan')">Cancelar</button><button class="btn btn-primary" onclick="guardarPlan()">Guardar plan</button></div>
+  </div>
+</div>
+
+<!-- MODAL EJECUCIÓN DE MANTENIMIENTO -->
+<!-- MODAL AD-HOC: elegir equipo para mantenimiento sin programar -->
+<div class="modal-overlay" id="modal-adhoc">
+  <div class="modal">
+    <div class="modal-head"><h3>Mantenimiento sin programar</h3><button class="modal-close" onclick="cerrarModal('modal-adhoc')">×</button></div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Elige un equipo elegible (su tipo debe tener un plan activo). Se creará y abrirá el mantenimiento de inmediato.</div>
+      <input class="finput" id="adhoc-search" placeholder="Buscar por placa, serial, marca o modelo..." oninput="buscarAdhoc()">
+      <div id="adhoc-results" class="panel tabla-scroll" style="margin-top:8px;max-height:340px">
+        <table class="tbl"><thead><tr><th>Placa</th><th>Tipo</th><th>Marca/Modelo</th><th>Estado</th><th></th></tr></thead>
+        <tbody id="adhoc-results-body"></tbody></table>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="cerrarModal('modal-adhoc')">Cerrar</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-ejec">
+  <div class="modal modal-lg" style="max-height:92vh;display:flex;flex-direction:column">
+    <div class="modal-head" style="flex-shrink:0"><h3 id="ejec-title">Ejecutar mantenimiento</h3><button class="modal-close" onclick="cerrarModal('modal-ejec')">×</button></div>
+    <div class="modal-body" style="overflow:auto">
+      <input type="hidden" id="ejec-tarea-id">
+      <div id="ejec-equipo-info" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px"></div>
+      <div id="ejec-estado-hint" style="display:none;background:rgba(255,176,32,0.1);border:1px solid rgba(255,176,32,0.3);color:var(--amber);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px"></div>
+      <div id="ejec-checklist"></div>
+      <div class="fgroup" style="margin-top:10px"><label>Observaciones</label><textarea class="ftextarea" id="ejec-observaciones" placeholder="Notas del mantenimiento"></textarea></div>
+      <div id="ejec-acta-link" style="display:none;margin-top:10px;font-size:12px"></div>
+    </div>
+    <div class="modal-foot" style="flex-shrink:0" id="ejec-foot"></div>
+  </div>
+</div>
+
+<!-- MODAL CUARTO TÉCNICO (Redes) -->
+<div class="modal-overlay" id="modal-cuarto">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-cuarto-title">Nuevo cuarto técnico</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-cuarto')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="cuarto-id">
+      <div class="frow cols2">
+        <div class="fgroup"><label>Empresa *</label>
+          <select class="fselect" id="cuarto-empresa" onchange="onCambioEmpresaCuarto()"><option value="">Seleccionar...</option></select></div>
+        <div class="fgroup"><label>Sede *</label>
+          <select class="fselect" id="cuarto-sede"><option value="">Seleccionar...</option></select>
+          <div class="fhint" id="cuarto-sede-hint" style="display:none">Esta empresa no tiene sedes en su catálogo. Agrégalas en Administración › Catálogos.</div></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Identificador *</label><input class="finput" id="cuarto-identificador" placeholder="Ej: CT-BOG-01"></div>
+        <div class="fgroup"><label>Nombre</label><input class="finput" id="cuarto-nombre" placeholder="Nombre amigable (opcional)"></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Ubicación (detalle)</label><input class="finput" id="cuarto-ubicacion-detalle" placeholder="Ej: piso 2, junto a sistemas"></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Descripción</label><textarea class="ftextarea" id="cuarto-descripcion" placeholder="Notas del cuarto técnico"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-cuarto')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarCuarto()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RACK (Redes) -->
+<div class="modal-overlay" id="modal-rack">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-rack-title">Nuevo rack</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-rack')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="rack-id">
+      <div class="frow cols2">
+        <div class="fgroup"><label>Nombre *</label><input class="finput" id="rack-nombre" placeholder="Ej: Rack A"></div>
+        <div class="fgroup"><label>Capacidad (U) *</label><input class="finput" id="rack-capacidad" type="number" min="1" value="42"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Orden</label><input class="finput" id="rack-orden" type="number" min="0" placeholder="0"></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Descripción</label><textarea class="ftextarea" id="rack-descripcion" placeholder="Notas del rack"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-rack')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarRack()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DISPOSITIVO (Redes) -->
+<div class="modal-overlay" id="modal-dispositivo">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3 id="modal-disp-title">Nuevo dispositivo</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-dispositivo')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="disp-id">
+      <input type="hidden" id="disp-activo-id">
+      <div class="redes-modal-cuarto" id="disp-cuarto-label"></div>
+
+      <!-- Paso 1: elegir el activo a montar (solo al MONTAR) -->
+      <div id="disp-picker-wrap">
+        <div class="fgroup"><label>Activo a montar *</label>
+          <input class="finput" id="disp-buscar" placeholder="Buscar por placa / marca / modelo…" oninput="filtrarActivosMontables()">
+          <div class="fhint">Solo se listan activos <strong>disponibles</strong> de tipo de red que no estén ya montados.</div>
+        </div>
+        <div class="disp-picker-list" id="disp-picker-list"></div>
+      </div>
+
+      <!-- Activo seleccionado (chip de solo lectura) -->
+      <div class="disp-activo-sel" id="disp-activo-sel" style="display:none"></div>
+
+      <!-- Datos de montaje/red (paso 2) -->
+      <div id="disp-montaje-fields" style="display:none">
+        <div class="fgroup"><label>Ubicación *</label>
+          <div class="redes-seg">
+            <button type="button" class="redes-seg-btn active" id="disp-seg-rack" onclick="setDispUbicacion('rack')">En rack</button>
+            <button type="button" class="redes-seg-btn" id="disp-seg-fuera" onclick="setDispUbicacion('fuera')">Fuera de rack</button>
+          </div>
+        </div>
+
+        <div id="disp-rack-fields">
+          <div class="frow cols3">
+            <div class="fgroup"><label>Rack *</label>
+              <select class="fselect" id="disp-rack"><option value="">Seleccionar...</option></select></div>
+            <div class="fgroup"><label>Posición (U) *</label><input class="finput" id="disp-posicion" type="number" min="1" placeholder="Ej: 10"></div>
+            <div class="fgroup"><label>Tamaño (U) *</label><input class="finput" id="disp-tamano" type="number" min="1" value="1"></div>
+          </div>
+        </div>
+
+        <div id="disp-fuera-fields" style="display:none">
+          <div class="frow">
+            <div class="fgroup"><label>Ubicación física</label><input class="finput" id="disp-ubicacion-fisica" placeholder="Ej: techo pasillo, piso esquina norte"></div>
+          </div>
+        </div>
+
+        <div class="frow cols2">
+          <div class="fgroup"><label>IP de gestión</label><input class="finput" id="disp-ip" placeholder="Ej: 10.0.0.2"></div>
+          <div class="fgroup"><label>Nº puertos</label><input class="finput" id="disp-puertos" type="number" min="0" placeholder="24"></div>
+        </div>
+        <div class="frow">
+          <div class="fgroup"><label>Conectado a</label><input class="finput" id="disp-conexion" placeholder="Ej: SW-CORE-01 puerto 12"></div>
+        </div>
+        <div class="frow">
+          <div class="fgroup"><label>Datos adicionales</label><textarea class="ftextarea" id="disp-datos" placeholder="Notas, VLANs, credenciales de referencia..."></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-danger" id="disp-btn-desmontar" style="display:none;margin-right:auto" onclick="desmontarDispositivo()"><i class="ti ti-plug-off"></i> Desmontar</button>
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-dispositivo')">Cancelar</button>
+      <button class="btn btn-primary" id="disp-btn-guardar" onclick="guardarDispositivo()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RACK COMPLETO (Redes) -->
+<div class="modal-overlay" id="modal-rack-full">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3 id="modal-rack-full-title">Rack</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-rack-full')">×</button>
+    </div>
+    <div class="modal-body" id="modal-rack-full-body"></div>
+  </div>
+</div>
+
+<!-- MODAL IMPRESORA -->
+<div class="modal-overlay" id="modal-impresora">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-impresora-title">Nueva impresora</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-impresora')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="impr-id">
+      <div class="frow cols2">
+        <div class="fgroup"><label>Empresa *</label>
+          <select class="fselect" id="impr-empresa" onchange="onCambioEmpresaImpresora()"><option value="">Seleccionar...</option></select></div>
+        <div class="fgroup"><label>Sede</label>
+          <select class="fselect" id="impr-sede"><option value="">Seleccionar...</option></select>
+          <div class="fhint" id="impr-sede-hint" style="display:none">Esta empresa no tiene sedes en su catálogo. Agrégalas en Administración › Catálogos.</div></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Ciudad</label>
+          <select class="fselect" id="impr-ciudad"><option value="">Seleccionar...</option></select>
+          <div class="fhint" id="impr-ciudad-hint" style="display:none">No hay ciudades en el catálogo. Agrégalas en Administración › Catálogos › Ciudades.</div></div>
+        <div class="fgroup"><label>Dependencia</label><input class="finput" id="impr-dependencia" placeholder="Área / oficina"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Modelo</label><input class="finput" id="impr-modelo" placeholder="Ej: HP LaserJet M428"></div>
+        <div class="fgroup"><label>Tipo</label>
+          <select class="fselect" id="impr-tipo">
+            <option value="">—</option>
+            <option value="color">Color</option>
+            <option value="monocromatica">Monocromática</option>
+          </select></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Serial</label><input class="finput" id="impr-serial" placeholder="Serial del equipo"></div>
+        <div class="fgroup"><label>IP</label><input class="finput" id="impr-ip" placeholder="Ej: 10.0.0.50"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup" id="impr-estado-wrap"><label>Estado *</label>
+          <select class="fselect" id="impr-estado">
+            <option value="en_servicio">En servicio</option>
+            <option value="inactiva">Inactiva</option>
+            <option value="en_reparacion">En reparación</option>
+          </select></div>
+        <div class="fgroup"><label>Correo de escaneo</label><input class="finput" id="impr-correo" type="email" placeholder="escaneo@empresa.com"></div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>Proveedor</label>
+          <select class="fselect" id="impr-proveedor"><option value="">Seleccionar...</option></select>
+          <div class="fhint" id="impr-proveedor-hint" style="display:none">No hay proveedores marcados para "Impresoras". Márcalos en Administración › Catálogos › Proveedores.</div></div>
+      </div>
+      <!-- Solo visible en el flujo de REEMPLAZO -->
+      <div class="frow" id="impr-motivo-wrap" style="display:none">
+        <div class="fgroup"><label>Motivo del reemplazo *</label>
+          <input class="finput" id="impr-motivo" placeholder="Ej: falla de hardware, fin de contrato, upgrade de equipo...">
+          <div class="fhint" style="display:block;color:var(--text3)">Se creará una NUEVA impresora con estos datos; la actual pasará a “reemplazada” (historial).</div></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-danger" id="impr-btn-eliminar" style="display:none;margin-right:auto" onclick="eliminarImpresora()"><i class="ti ti-trash"></i> Eliminar</button>
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-impresora')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarImpresora()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HISTORIAL DE REEMPLAZO (Impresoras) -->
+<div class="modal-overlay" id="modal-impresora-historial">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Historial de reemplazo</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-impresora-historial')">×</button>
+    </div>
+    <div class="modal-body" id="impr-hist-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-impresora-historial')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REPORTE DE DAÑO (Impresoras) -->
+<div class="modal-overlay" id="modal-reporte-dano">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3>Reportar daño al proveedor</h3>
+      <button class="modal-close" onclick="rdCerrar()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="impr-rd-id">
+      <div class="redes-modal-cuarto" id="impr-rd-printer"></div>
+      <div class="fgroup"><label>Descripción del daño *</label>
+        <textarea class="ftextarea" id="impr-rd-descripcion" placeholder="Describe la falla observada..."></textarea></div>
+      <div class="fgroup"><label>Destinatarios *</label>
+        <div style="display:flex;gap:6px">
+          <input class="finput" id="impr-rd-dest-input" type="email" placeholder="correo@proveedor.com"
+                 onkeydown="if(event.key==='Enter'){event.preventDefault();rdAgregarDest();}">
+          <button class="btn btn-ghost btn-sm" type="button" onclick="rdAgregarDest()">Agregar</button>
+        </div>
+        <div id="impr-rd-dest-chips" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:5px"></div>
+        <div class="fhint" style="display:block;color:var(--text3)">Prellenado con el correo del proveedor; puedes agregar o quitar. En copia se enviará a tu correo (usuario actual).</div>
+      </div>
+      <div class="fgroup"><label>Capturas de pantalla</label>
+        <div id="impr-rd-paste" tabindex="0" style="border:1.5px dashed var(--border2);border-radius:10px;padding:16px;text-align:center;color:var(--text3);font-size:12px;cursor:text;background:var(--dark2)">
+          Haz clic aquí y pega las capturas con <b>Ctrl+V</b> (no se guardan; se adjuntan al correo)
+        </div>
+        <div id="impr-rd-thumbs" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+      </div>
+      <div style="text-align:right;margin:6px 0">
+        <button class="btn btn-ghost btn-sm" type="button" onclick="rdGenerarPreview()"><i class="ti ti-eye"></i> Generar preview</button>
+      </div>
+      <div id="impr-rd-preview-wrap" style="display:none;border-top:1px solid var(--border);padding-top:12px">
+        <div class="fgroup"><label>Asunto *</label><input class="finput" id="impr-rd-asunto"></div>
+        <div class="fgroup"><label>Cuerpo del correo *</label>
+          <textarea class="ftextarea" id="impr-rd-cuerpo" style="min-height:180px;font-family:var(--mono);font-size:11px"></textarea>
+          <div class="fhint" style="display:block;color:var(--text3)">Editable. Se envía como correo con formato; las capturas van adjuntas.</div></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="rdCerrar()">Cancelar</button>
+      <button class="btn btn-primary" id="impr-rd-enviar" onclick="rdEnviar()"><i class="ti ti-send"></i> Enviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HISTORIAL DE REPORTES DE DAÑO (Impresoras) -->
+<div class="modal-overlay" id="modal-reportes-dano">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Reportes de daño</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-reportes-dano')">×</button>
+    </div>
+    <div class="modal-body" id="impr-rd-hist-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-reportes-dano')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE DE UN REPORTE (sección Reportes) -->
+<div class="modal-overlay" id="modal-rep-detalle">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Detalle del reporte de daño</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-rep-detalle')">×</button>
+    </div>
+    <div class="modal-body" id="rep-detalle-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-rep-detalle')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICACIONES -->
+<div class="notif" id="notif-container"></div>
+  <!-- JS modules (load order matters) -->
+  <script src="/js/nav.js"></script>
+  <script src="/js/core.js?v=3"></script>
+  <script src="/js/pendientes.js?v=1"></script>
+  <script src="/js/empresas.js"></script>
+  <script src="/js/activos.js"></script>
+  <script src="/js/accesorios.js"></script>
+  <script src="/js/empleados.js"></script>
+  <script src="/js/asignaciones.js"></script>
+  <script src="/js/devoluciones.js?v=2"></script>
+  <script src="/js/actas.js"></script>
+  <script src="/js/modal_empleado.js"></script>
+  <script src="/js/administracion.js?v=6"></script>
+  <script src="/js/servidores.js?v=5"></script>
+  <script src="/js/redes.js?v=6"></script>
+  <script src="/js/impresoras.js?v=6"></script>
+  <script src="/js/compras.js?v=2"></script>
+  <script src="/js/hoja_vida.js"></script>
+  <script src="/js/lib/qrcode.min.js"></script>
+  <script src="/js/etiquetas.js"></script>
+  <script src="/js/estados.js"></script>
+  <script src="/js/reservas.js"></script>
+  <script src="/js/prestamos.js"></script>
+  <script src="/js/custodio.js"></script>
+  <script src="/js/mantenimiento.js?v=1"></script>
+  <script>
+    // ── Servidores view extension (cannot modify core.js) ─────────────────────
+    VIEWS['servidores'] = {
+      title: 'Servidores',
+      sub:   '— Infraestructura tecnológica',
+      btn:   'Nuevo servidor',
+    };
+
+    const _showViewBase = showView;
+    showView = function(name, el) {
+      _showViewBase(name, el);
+      if (name === 'servidores') {
+        // El botón "+ Nuevo" del encabezado se retiró; Servidores usa su propio botón (srv-btn-nuevo).
+        const srvBtnNuevo = document.getElementById('srv-btn-nuevo');
+        if (srvBtnNuevo) srvBtnNuevo.style.display = hasPermiso('servidores.crear') ? '' : 'none';
+        cargarCatalogosServidores().then(() => {
+          // populate ambient tabs from catalogs
+          const cat = catServidores;
+          if (cat && cat.ambientes && cat.ambientes.length) {
+            const tabs = document.getElementById('tabs-servidores');
+            if (tabs && tabs.querySelectorAll('.tab').length === 1) {
+              cat.ambientes.forEach(a => {
+                const btn = document.createElement('button');
+                btn.className = 'tab';
+                btn.style.setProperty('--tab-dot', a.color || '#888');
+                btn.innerHTML = `${a.nombre}`;
+                btn.onclick = function() { filtrarServidores(a.id, this); };
+                tabs.appendChild(btn);
+              });
+            }
+          }
+          poblarFiltrosServidores();
+          cargarStatsServidores();
+          cargarServidores();
+        });
+      }
+    };
+
+    const _recargarBase = recargarVistaActual;
+    recargarVistaActual = function() {
+      _recargarBase();
+      if (vistaActual === 'servidores') { poblarFiltrosServidores(); cargarServidores(); }
+    };
+
+    const _accionBase = accionNuevo;
+    accionNuevo = function() {
+      if (vistaActual === 'servidores') { abrirModalServidor(); return; }
+      _accionBase();
+    };
+  </script>
+<div class="dropdown-overlay" id="dropdown-overlay" onclick="cerrarEmpresaDropdown()"></div>
+
+<!-- MODAL ASIGNACIÓN RÁPIDA -->
+<div class="modal-overlay" id="modal-asig-empleado">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3 id="mae-title">Asignar equipos</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-asig-empleado')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mae-empleado-id">
+      <input type="hidden" id="mae-empresa-id">
+
+      <!-- Info empleado -->
+      <div style="background:rgba(6,191,255,0.08);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;margin-bottom:16px">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Empleado</div>
+        <div style="font-size:14px;font-weight:700;color:var(--cyan)" id="mae-emp-nombre">—</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px" id="mae-emp-info">—</div>
+      </div>
+
+      <!-- Tabs activos / accesorios -->
+      <div class="asig-tabs">
+        <button class="asig-tab active" onclick="switchMaeTab('activos',this)">🖥 Activos disponibles</button>
+        <button class="asig-tab" onclick="switchMaeTab('accesorios',this)">🖱 Accesorios disponibles</button>
+      </div>
+
+      <!-- Panel activos -->
+      <div class="asig-panel active" id="mae-panel-activos">
+        <input class="finput" id="mae-search-activos" placeholder="Filtrar activos..." oninput="filtrarMaeItems('activos')" style="margin-bottom:8px">
+        <div class="asig-lista" id="mae-lista-activos">
+          <div style="text-align:center;color:var(--text3);padding:20px">Cargando activos disponibles...</div>
+        </div>
+      </div>
+
+      <!-- Panel accesorios -->
+      <div class="asig-panel" id="mae-panel-accesorios">
+        <input class="finput" id="mae-search-accesorios" placeholder="Filtrar accesorios..." oninput="filtrarMaeItems('accesorios')" style="margin-bottom:8px">
+        <div class="asig-lista" id="mae-lista-accesorios">
+          <div style="text-align:center;color:var(--text3);padding:20px">Cargando accesorios disponibles...</div>
+        </div>
+      </div>
+
+      <!-- Items seleccionados -->
+      <div class="items-seleccionados" id="mae-seleccionados">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600">Items seleccionados para asignar</div>
+        <div id="mae-tags"></div>
+      </div>
+
+      <div class="fgroup" style="margin-top:12px">
+        <label>Responsable entrega</label>
+        <input class="finput" id="mae-responsable" placeholder="Técnico que entrega los equipos">
+      </div>
+      <div class="fgroup">
+        <label>Observaciones</label>
+        <input class="finput" id="mae-obs" placeholder="Opcional...">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-asig-empleado')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarAsigEmpleado()">✓ Asignar seleccionados y generar actas</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RECURSOS DEL EMPLEADO -->
+<div class="modal-overlay" id="modal-recursos-empleado">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3>Recursos asignados</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-recursos-empleado')">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- Info empleado -->
+      <div style="background:rgba(6,191,255,0.08);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;margin-bottom:16px">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Empleado</div>
+        <div style="font-size:14px;font-weight:700;color:var(--cyan)" id="remp-emp-nombre">—</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px" id="remp-emp-info">—</div>
+      </div>
+      <!-- Lista de recursos -->
+      <div id="remp-body" style="max-height:380px;overflow-y:auto"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-recursos-empleado')">Cerrar</button>
+      <button class="btn btn-primary" id="remp-btn-devolver" style="display:none;background:linear-gradient(135deg,var(--amber),#CC8800);box-shadow:0 2px 12px rgba(255,176,32,0.25)">
+        ↩ Registrar devolución
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DEVOLUCIÓN -->
+<div class="modal-overlay" id="modal-devolucion">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3 id="mdev-title">Registrar devolución</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-devolucion')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mdev-asig-id">
+      <input type="hidden" id="mdev-usuario-id">
+
+      <!-- Progreso -->
+      <div class="devol-progress">
+        <div>
+          <div class="devol-step-dot active" id="dot-1">1</div>
+          <div class="devol-step-label">Seleccionar</div>
+        </div>
+        <div class="devol-step-line" id="line-1"></div>
+        <div>
+          <div class="devol-step-dot" id="dot-2">2</div>
+          <div class="devol-step-label">Confirmar</div>
+        </div>
+        <div class="devol-step-line" id="line-2"></div>
+        <div>
+          <div class="devol-step-dot" id="dot-3">3</div>
+          <div class="devol-step-label">Generar acta</div>
+        </div>
+      </div>
+
+      <!-- PASO 1: Seleccionar ítems -->
+      <div class="devol-step active" id="mdev-paso1">
+        <!-- Info empleado -->
+        <div style="background:rgba(255,176,32,0.07);border:1px solid rgba(255,176,32,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Empleado que devuelve</div>
+          <div style="font-size:14px;font-weight:700;color:var(--amber)" id="mdev-emp-nombre">—</div>
+          <div style="font-size:11px;color:var(--text2)" id="mdev-emp-info">—</div>
+        </div>
+
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">
+          Selecciona los ítems que serán devueltos:
+        </div>
+
+        <div class="asig-lista" id="mdev-lista-items" style="max-height:280px">
+          <div style="text-align:center;color:var(--text3);padding:20px">Cargando ítems asignados...</div>
+        </div>
+
+        <div style="margin-top:10px;font-size:12px;color:var(--text3)" id="mdev-contador">
+          0 ítems seleccionados
+        </div>
+      </div>
+
+      <!-- PASO 2: Confirmar y datos -->
+      <div class="devol-step" id="mdev-paso2">
+        <div class="devol-seccion">Ítems a devolver</div>
+        <div id="mdev-resumen-items"></div>
+
+        <div class="frow cols2" style="margin-top:14px">
+          <div class="fgroup">
+            <label>Responsable que recibe <span style="color:var(--text3);font-weight:400;text-transform:none">(usuario actual)</span></label>
+            <input class="finput" id="mdev-responsable" readonly title="Se asigna automáticamente al usuario que registra la devolución" style="background:rgba(6,191,255,0.05);color:var(--text2);cursor:not-allowed">
+          </div>
+          <div class="fgroup">
+            <label>Estado físico de los equipos</label>
+            <select class="fselect" id="mdev-estado-fisico">
+              <option value="Buen estado">Buen estado</option>
+              <option value="Estado regular">Estado regular</option>
+              <option value="Con daños">Con daños</option>
+            </select>
+          </div>
+        </div>
+        <div class="fgroup">
+          <label>Observaciones</label>
+          <textarea class="ftextarea" id="mdev-obs" placeholder="Detalles de la devolución, daños encontrados, etc."></textarea>
+        </div>
+        <div class="fgroup" style="border-top:0.5px solid var(--border);padding-top:10px;margin-top:4px">
+          <label style="color:#2DD4BF">🛡 Custodio en sede (opcional)</label>
+          <input class="finput" id="mdev-custodio-cedula" placeholder="Cédula del responsable si el equipo queda en la sede" autocomplete="off">
+          <div id="mdev-custodio-info" style="display:none;font-size:11px;margin-top:6px"></div>
+          <small style="color:var(--text3);font-size:10px;margin-top:4px;display:block">Opcional y separado del acta: el recurso queda <strong>Disponible</strong> en la sede bajo la responsabilidad de este empleado (misma empresa o relacionada).</small>
+        </div>
+
+        <!-- Programar mantenimiento preventivo (opcional) — solo si hay plan + permiso -->
+        <div class="fgroup" id="mdev-mant-block" style="display:none;border-top:0.5px solid var(--border);padding-top:10px;margin-top:4px">
+          <label style="color:#F59E0B">🔧 Programar mantenimiento preventivo (opcional)</label>
+          <small style="color:var(--text3);font-size:10px;margin:2px 0 8px;display:block">Marca los equipos a los que se les hará mantenimiento tras la devolución. Se crea una tarea pendiente para el técnico elegido (el técnico puede reprogramarla).</small>
+          <div id="mdev-mant-lista" style="margin-bottom:10px"></div>
+          <div class="frow cols2">
+            <div class="fgroup">
+              <label>Técnico asignado</label>
+              <select class="fselect" id="mdev-mant-tecnico"><option value="">Seleccionar...</option></select>
+            </div>
+            <div class="fgroup">
+              <label>Fecha programada</label>
+              <input class="finput" type="date" id="mdev-mant-fecha">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 3: Acta generada -->
+      <div class="devol-step" id="mdev-paso3">
+        <div style="text-align:center;padding:30px 20px">
+          <div style="font-size:40px;margin-bottom:16px">✅</div>
+          <div style="font-size:16px;font-weight:700;color:var(--green);margin-bottom:8px">Devolución registrada correctamente</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:20px" id="mdev-acta-info">Acta de devolución generada.</div>
+          <button class="btn btn-primary" id="mdev-btn-pdf" onclick="descargarActaDev()">
+            ↓ Descargar acta de devolución PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-foot" id="mdev-footer">
+      <button class="btn btn-ghost" id="mdev-btn-back" onclick="mdevAnterior()" style="display:none">← Anterior</button>
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-devolucion')" id="mdev-btn-cancelar">Cancelar</button>
+      <button class="btn btn-primary" id="mdev-btn-next" onclick="mdevSiguiente()">Seleccionar ítems →</button>
+    </div>
+  </div>
+</div>
+
+<!-- DROPDOWN EMPRESA (fuera del topbar para evitar stacking context) -->
+<div class="emp-dropdown" id="emp-dropdown">
+  <div class="emp-option all-option" onclick="seleccionarEmpresa('','Todas las empresas','')">
+    <div class="emp-opt-dot" style="background:var(--text3)"></div>
+    <div class="emp-opt-info">
+      <div class="emp-opt-name">Todas las empresas</div>
+      <div class="emp-opt-nit">Vista global</div>
+    </div>
+  </div>
+  <div id="emp-options-list"></div>
+</div>
+
+<!-- MODAL VISTA PREVIA ACTA PDF -->
+<div class="modal-overlay" id="modal-acta-preview" style="z-index:1100">
+  <div class="modal" style="width:90vw;max-width:900px;height:90vh;display:flex;flex-direction:column">
+    <div class="modal-head" style="flex-shrink:0">
+      <h3 id="preview-titulo">Vista previa del acta</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-acta-preview')">×</button>
+    </div>
+    <div id="preview-firma-banner" style="display:none;flex-shrink:0;padding:8px 20px;background:rgba(0,229,160,0.08);border-bottom:1px solid rgba(0,229,160,0.25);font-size:12px;font-weight:600;color:#00E5A0;letter-spacing:0.3px"></div>
+    <div style="flex:1;overflow:hidden;position:relative;background:#2a2a2a;border-radius:0 0 4px 4px">
+      <!-- Spinner de carga -->
+      <div id="preview-loading" style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px">
+        <div style="width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+        <div style="font-size:12px;color:var(--text3)">Cargando PDF...</div>
+      </div>
+      <!-- iframe para el PDF -->
+      <iframe id="preview-iframe"
+        style="display:none;width:100%;height:100%;border:none"
+        type="application/pdf">
+      </iframe>
+    </div>
+    <div class="modal-foot" style="flex-shrink:0">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-acta-preview')">Cerrar</button>
+      <button class="btn btn-primary" onclick="descargarPreviewActa()" style="gap:6px">
+        ↓ Descargar PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VISOR DE COTIZACIÓN (pdf / imagen) -->
+<div class="modal-overlay" id="modal-cot-viewer" style="z-index:1100" onclick="if(event.target===this)cerrarCotViewer()">
+  <div class="modal" style="width:90vw;max-width:1000px;height:90vh;display:flex;flex-direction:column">
+    <div class="modal-head" style="flex-shrink:0">
+      <h3 id="cotv-titulo">Vista previa</h3>
+      <button class="modal-close" onclick="cerrarCotViewer()">×</button>
+    </div>
+    <div style="flex:1;overflow:auto;position:relative;background:#2a2a2a;border-radius:0 0 4px 4px">
+      <!-- Spinner -->
+      <div id="cotv-loading" style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px">
+        <div style="width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+        <div style="font-size:12px;color:var(--text3)">Cargando…</div>
+      </div>
+      <!-- Error -->
+      <div id="cotv-error" style="display:none;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;padding:20px;text-align:center">
+        <div style="font-size:13px;color:var(--text2)">No se pudo cargar el archivo.</div>
+        <button class="btn btn-primary btn-sm" id="cotv-error-download">↓ Descargar</button>
+      </div>
+      <!-- PDF -->
+      <iframe id="cotv-iframe" style="display:none;width:100%;height:100%;border:none" type="application/pdf"></iframe>
+      <!-- Imagen -->
+      <img id="cotv-img" alt="" style="display:none;max-width:100%;max-height:100%;margin:auto;padding:12px;object-fit:contain">
+    </div>
+    <div class="modal-foot" style="flex-shrink:0">
+      <button class="btn btn-ghost" onclick="cerrarCotViewer()">Cerrar</button>
+      <button class="btn btn-primary" id="cotv-download" style="gap:6px">↓ Descargar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODALES ADMINISTRACIÓN ════════════════════════════════════════════ -->
+
+<!-- MODAL NUEVO USUARIO SISTEMA -->
+<div class="modal-overlay" id="modal-adm-usuario">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Nuevo usuario del sistema</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-adm-usuario')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="frow cols2">
+        <div class="fgroup"><label>Nombre completo *</label><input class="finput" id="adm-usr-nombre" placeholder="Nombre y apellidos"></div>
+        <div class="fgroup"><label>Email *</label><input class="finput" id="adm-usr-email" type="email" placeholder="usuario@empresa.com"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Contraseña *</label><input class="finput" id="adm-usr-password" type="password" placeholder="Mínimo 6 caracteres"></div>
+        <div class="fgroup"><label>Empresa por defecto</label>
+          <select class="fselect" id="adm-usr-empresa"><option value="">Sin empresa (global)</option></select></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;padding:8px 10px;background:rgba(6,191,255,0.05);border:1px solid var(--border);border-radius:6px">
+        Después de crear el usuario podrás asignarle roles y empresas desde el panel de accesos.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-adm-usuario')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarNuevoUsuario()">Crear y configurar accesos →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR USUARIO SISTEMA -->
+<div class="modal-overlay" id="modal-adm-editar">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Editar usuario</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-adm-editar')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="adm-edit-id">
+      <div class="frow cols2">
+        <div class="fgroup"><label>Nombre completo *</label><input class="finput" id="adm-edit-nombre" placeholder="Nombre y apellidos"></div>
+        <div class="fgroup"><label>Email *</label><input class="finput" id="adm-edit-email" type="email"></div>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Estado</label>
+          <select class="fselect" id="adm-edit-activo">
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+          </select></div>
+        <div class="fgroup" id="adm-edit-pwd-wrap">
+          <label style="opacity:0">—</label>
+          <button class="btn btn-ghost btn-sm" style="color:var(--amber);border-color:rgba(255,176,32,0.3);width:100%" onclick="cerrarModal('modal-adm-editar');abrirModalPassword(document.getElementById('adm-edit-id').value,document.getElementById('adm-edit-nombre').value)">🔒 Cambiar contraseña</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-adm-editar')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEditarUsuario()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ACCESOS (modal-xl) -->
+<div class="modal-overlay" id="modal-adm-accesos">
+  <div class="modal modal-xl">
+    <div class="modal-head">
+      <h3 id="adm-acc-title">Accesos</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-adm-accesos')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="adm-acc-split">
+        <!-- Lista de accesos actuales -->
+        <div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-weight:600;margin-bottom:10px">Accesos actuales</div>
+          <div id="adm-acc-lista" style="min-height:60px">
+            <div style="color:var(--text3);padding:10px;text-align:center">Cargando...</div>
+          </div>
+        </div>
+        <!-- Formulario para agregar acceso -->
+        <div style="background:rgba(6,191,255,0.03);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-weight:600;margin-bottom:12px">Agregar nuevo acceso</div>
+          <div class="fgroup" style="margin-bottom:10px">
+            <label>Rol</label>
+            <select class="fselect" id="adm-acc-rol">
+              <option value="">Seleccionar rol...</option>
+            </select>
+          </div>
+          <div class="fgroup" style="margin-bottom:14px">
+            <label>Empresa</label>
+            <select class="fselect" id="adm-acc-empresa">
+              <option value="">Seleccionar empresa...</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="agregarAcceso()">+ Agregar acceso</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-adm-accesos')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CAMBIAR CONTRASEÑA -->
+<div class="modal-overlay" id="modal-adm-password">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Cambiar contraseña</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-adm-password')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="adm-pwd-id">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px">
+        Usuario: <strong id="adm-pwd-nombre" style="color:var(--text)">—</strong>
+      </div>
+      <div class="frow cols2">
+        <div class="fgroup"><label>Nueva contraseña *</label><input class="finput" id="adm-pwd-nueva" type="password" placeholder="Mínimo 6 caracteres"></div>
+        <div class="fgroup"><label>Confirmar contraseña *</label><input class="finput" id="adm-pwd-confirmar" type="password" placeholder="Repetir contraseña"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-adm-password')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarPassword()">Cambiar contraseña</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LINK DE FIRMA -->
+<div class="modal-overlay" id="modal-link-firma">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Link de firma digital</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-link-firma')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">
+        Comparte este link con el empleado por <strong>correo, WhatsApp o cualquier medio</strong>.
+        El empleado podrá abrir el link desde su celular y firmar el acta con el dedo.
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input class="finput" id="firma-link-input" readonly
+               style="font-family:var(--mono);font-size:11px;flex:1;background:rgba(6,191,255,0.05);color:var(--cyan)">
+        <button class="btn btn-primary" onclick="copiarLinkFirma()" style="white-space:nowrap;flex-shrink:0">
+          Copiar link
+        </button>
+      </div>
+      <div id="firma-link-expira" style="font-size:10px;color:var(--text3);margin-top:8px"></div>
+      <div style="margin-top:16px;padding:10px 12px;background:rgba(255,176,32,0.07);border:1px solid rgba(255,176,32,0.2);border-radius:8px;font-size:11px;color:var(--amber)">
+        ⚠ El link es de <strong>uso único</strong> — una vez firmado queda inválido automáticamente.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-link-firma')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESUMEN DE ASIGNACIÓN -->
+<div class="modal-overlay" id="modal-asig-exito">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>✅ Asignación creada</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-asig-exito')">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- A quién se asignó -->
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px">Asignado a</div>
+      <div style="font-size:16px;font-weight:700;color:var(--cyan)" id="asig-exito-empleado">—</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px" id="asig-exito-empleado-meta"></div>
+
+      <!-- Qué se asignó -->
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:6px">Recursos asignados</div>
+      <div id="asig-exito-items" style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px"></div>
+
+      <!-- Link de firma -->
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:6px">Link de firma del acta</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.5">
+        Comparte este link con el empleado por <strong>correo, WhatsApp o cualquier medio</strong> para que firme el acta desde su celular.
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input class="finput" id="asig-exito-link" readonly
+               style="font-family:var(--mono);font-size:11px;flex:1;background:rgba(6,191,255,0.05);color:var(--cyan)">
+        <button class="btn btn-primary" onclick="copiarAsigExitoLink()" style="white-space:nowrap;flex-shrink:0">Copiar link</button>
+      </div>
+      <div id="asig-exito-expira" style="font-size:10px;color:var(--text3);margin-top:8px"></div>
+      <div style="margin-top:14px;padding:10px 12px;background:rgba(255,176,32,0.07);border:1px solid rgba(255,176,32,0.2);border-radius:8px;font-size:11px;color:var(--amber)">
+        ⚠ El link es de <strong>uso único</strong> — una vez firmado queda inválido automáticamente.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="verActaAsigExito()">👁 Ver acta</button>
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-asig-exito')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FECHA LÍMITE DE PRÉSTAMO (definir / extender) -->
+<div class="modal-overlay" id="modal-prestamo">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="prestamo-modal-title">Fecha límite de préstamo</h3>
+      <button class="modal-close" onclick="cerrarModal('modal-prestamo')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="prestamo-tipo">
+      <input type="hidden" id="prestamo-recurso-id">
+      <div style="font-size:13px;font-weight:600;color:var(--cyan);margin-bottom:12px" id="prestamo-recurso-label"></div>
+      <div class="fgroup"><label>Fecha límite de devolución *</label>
+        <input class="finput" id="prestamo-fecha-limite" type="date"></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">
+        El recurso permanece <strong>asignado</strong>. Al pasar la fecha sin devolución, se enviará una alerta al responsable.
+      </div>
+      <div id="prestamo-msg" style="display:none;border-radius:8px;padding:10px 14px;font-size:12px;margin-top:10px"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-prestamo')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarFechaLimitePrestamo()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

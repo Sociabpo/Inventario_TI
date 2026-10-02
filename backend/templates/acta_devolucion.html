@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; font-size: 8.5px; color: #000; padding: 10px 14px; }
+
+  .tbl-header { width:100%; border-collapse:collapse; border:1.5px solid #000; margin-bottom:0; }
+  .tbl-header td { vertical-align:middle; }
+  .td-logo { width:110px; padding:5px 8px; border-right:1.5px solid #000; text-align:center; }
+  .td-logo img { width:90px; height:auto; }
+  .td-logo-text { font-weight:bold; font-size:11px; color:#1a3a6b; }
+  .td-titulo { text-align:center; padding:6px 4px; }
+  .td-titulo .t1 { font-size:10px; font-weight:bold; text-transform:uppercase; }
+  .td-titulo .t2 { font-size:9.5px; font-weight:bold; text-transform:uppercase; }
+  .td-numero { width:80px; border-left:1.5px solid #000; text-align:center; font-weight:bold; font-size:10px; padding:6px 5px; }
+
+  .tbl-activo { width:100%; border-collapse:collapse; border:1.5px solid #000; border-top:none; margin-bottom:3px; }
+  .tbl-activo td { padding:3px 8px; font-size:9px; }
+
+  .seccion { border:1.5px solid #000; margin-bottom:3px; width:100%; }
+  .sec-titulo { text-align:center; font-weight:bold; font-size:8.5px; padding:2.5px; text-transform:uppercase; color:#fff; width:100%; }
+  .azul  { background-color:#1e3a5f; }
+  .gris  { background-color:#4a4a4a; }
+
+  .tbl-campos { width:100%; border-collapse:collapse; }
+  .tbl-campos td { padding:3px 7px; border-right:1px solid #ccc; border-bottom:1px solid #ccc; vertical-align:top; width:25%; }
+  .tbl-campos td:last-child { border-right:none; }
+  .tbl-campos tr:last-child td { border-bottom:none; }
+  .lbl { display:block; font-size:7px; font-weight:bold; color:#555; text-transform:uppercase; margin-bottom:1px; }
+  .val { display:block; font-size:9px; font-weight:bold; color:#000; min-height:12px; }
+  .val.devuelto { color:#1a7a4a; }
+
+  .tbl-acc { width:100%; border-collapse:collapse; font-size:8px; }
+  .tbl-acc th { background-color:#2c3e50; color:#fff; padding:3px 6px; text-align:center; border:1px solid #000; font-size:7.5px; text-transform:uppercase; }
+  .tbl-acc th:first-child { text-align:left; width:90px; }
+  .tbl-acc td { padding:3px 6px; border:1px solid #ccc; text-align:center; font-size:8px; }
+  .tbl-acc td:first-child { text-align:left; font-weight:bold; background-color:#f0f4f8; }
+
+  .obs-box { padding:4px 8px; min-height:24px; font-size:8.5px; }
+
+  .descargo { padding:5px 9px; font-size:7.5px; line-height:1.55; text-align:justify; }
+  .descargo p { margin-bottom:4px; }
+
+  .tbl-firmas-titulo { width:100%; border-collapse:collapse; }
+  .tbl-firmas-titulo td { text-align:center; padding:4px; font-weight:bold; font-size:8px; background-color:#f5f5f5; border-bottom:1px solid #ccc; }
+  .tbl-firmas { width:100%; border-collapse:collapse; }
+  .tbl-firmas td { width:50%; text-align:center; padding:8px 30px 6px; vertical-align:bottom; }
+  .firma-espacio { height:28px; display:block; }
+  .firma-linea { border-top:1.5px solid #000; margin-bottom:3px; }
+  .firma-nombre { font-weight:bold; font-size:8.5px; }
+  .firma-cc { font-size:8px; color:#333; }
+  .firma-rol { font-size:7.5px; color:#666; margin-top:1px; }
+  .tbl-pie { width:100%; border-collapse:collapse; border-top:1px solid #ccc; }
+  .tbl-pie td { padding:3px 8px; font-size:7px; color:#555; }
+  .copia { text-align:center; font-size:6.8px; color:#888; font-style:italic; padding:2px 8px 3px; border-top:1px solid #eee; }
+</style>
+</head>
+<body>
+
+<!-- ENCABEZADO -->
+<table class="tbl-header">
+  <tr>
+    <td class="td-logo">
+      {% if logo_base64 %}
+        <img src="data:image/png;base64,{{ logo_base64 }}" alt="Logo">
+      {% else %}
+        <div class="td-logo-text">{{ empresa.nombre_empresa }}</div>
+      {% endif %}
+    </td>
+    <td class="td-titulo">
+      <div class="t1">Acta Devolución</div>
+      <div class="t2">de Activos Tecnológicos</div>
+    </td>
+    <td class="td-numero">{{ numero_acta }}</td>
+  </tr>
+</table>
+
+<!-- FILA ACTIVO / FECHA -->
+<table class="tbl-activo">
+  <tr>
+    <td><b>Activo</b>&nbsp;&nbsp;{{ activo.id_placa_activo }}</td>
+    <td style="text-align:right"><b>Fecha:</b>&nbsp;&nbsp;{{ fecha }}</td>
+  </tr>
+</table>
+
+<!-- SECCIÓN 1: RESPONSABLE -->
+<div class="seccion">
+  <div class="sec-titulo azul">Información del Responsable</div>
+  <table class="tbl-campos">
+    <tr>
+      <td><span class="lbl">Empresa</span><span class="val">{{ empresa.nombre_empresa }}</span></td>
+      <td><span class="lbl">Sede</span><span class="val">{{ usuario.sede or '—' }}</span></td>
+      <td><span class="lbl">Cédula</span><span class="val">{{ usuario.documento }}</span></td>
+      <td><span class="lbl">Estado</span><span class="val devuelto">Devuelto</span></td>
+    </tr>
+    <tr>
+      <td colspan="2"><span class="lbl">Responsable</span><span class="val" style="font-size:10px">{{ usuario.nombre_completo }}</span></td>
+      <td colspan="2"><span class="lbl">Cargo</span><span class="val">{{ usuario.cargo or '—' }}</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- SECCIÓN 2: DISPOSITIVO -->
+<div class="seccion">
+  <div class="sec-titulo azul">Información del Dispositivo</div>
+  <table class="tbl-campos">
+    <tr>
+      <td><span class="lbl">Tipo Equipo</span><span class="val">{{ activo.tipo_activo }}</span></td>
+      <td><span class="lbl">Procesador</span><span class="val">{{ activo.procesador or '—' }}</span></td>
+      <td><span class="lbl">Marca</span><span class="val">{{ activo.marca or '—' }}</span></td>
+      <td><span class="lbl">Memoria</span><span class="val">{{ activo.memoria_ram or '—' }}</span></td>
+    </tr>
+    <tr>
+      <td><span class="lbl">Modelo</span><span class="val">{{ activo.modelo or '—' }}</span></td>
+      <td><span class="lbl">Disco</span><span class="val">{{ activo.disco_1 or '—' }}{% if activo.disco_2 %} / {{ activo.disco_2 }}{% endif %}</span></td>
+      <td><span class="lbl">No Parte</span><span class="val">{{ activo.numero_parte or '—' }}</span></td>
+      <td><span class="lbl">Serial</span><span class="val">{{ activo.serial or '—' }}</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- SECCIÓN 3: ACCESORIOS -->
+<div class="seccion">
+  <div class="sec-titulo azul">Accesorios — Complementos</div>
+  <table class="tbl-acc">
+    <thead>
+      <tr><th>Tipo</th><th>Placa</th><th>Marca</th><th>Modelo</th><th>No Parte</th><th>Serial</th><th>Estado</th></tr>
+    </thead>
+    <tbody>
+      {% if accesorios %}
+        {% for acc in accesorios %}
+        <tr>
+          <td>{{ acc.tipo_accesorio }}</td>
+          <td>{{ acc.id_placa_accesorio or '—' }}</td>
+          <td>{{ acc.marca or '—' }}</td>
+          <td>{{ acc.modelo or '—' }}</td>
+          <td>—</td>
+          <td>{{ acc.serial or '—' }}</td>
+          <td>Devuelto</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="7" style="text-align:center;color:#999;font-style:italic;padding:6px">Sin accesorios devueltos</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<!-- SECCIÓN 4: OBSERVACIONES -->
+<div class="seccion">
+  <div class="sec-titulo gris">Observaciones</div>
+  <div class="obs-box">{{ acta.observaciones or '' }}</div>
+</div>
+
+<!-- SECCIÓN 5: DESCARGO DEVOLUCIÓN -->
+<div class="seccion">
+  <div class="sec-titulo gris">Descargo de Responsabilidad</div>
+  <div class="descargo">
+    <p>Yo <strong>{{ usuario.nombre_completo }}</strong>, mayor de edad, identificado como aparece al pie de mi firma, obrando en mi propio nombre y representación, declaro que he devuelto a mi empleador los activos tecnológicos acorde a los detalles en la parte superior.</p>
+    <p>Con la firma del presente documento, el colaborador realiza devolución de los activos tecnológicos en la parte superior asignado en las condiciones que le fueron asignados por la compañía {{ empresa.nombre_empresa }} y garantiza el buen uso y operativo.</p>
+    <p>En caso de no cumplir con las condiciones de devolución de activos tecnológicos, el área gestión TI en conjunto con el área de gestión humana determinará responsabilidades y procederá con las acciones estipuladas de cobro.</p>
+    <p><strong>Me comprometo a mantener y cumplir con los acuerdos de confidencialidad de la información establecidos por la compañía.</strong></p>
+    <p>Para constancia se lee y se firma en {{ empresa.ciudad or 'la ciudad' }} a los {{ fecha_constancia }}.</p>
+  </div>
+</div>
+
+<!-- SECCIÓN 6: FIRMAS -->
+<div class="seccion">
+  <table class="tbl-firmas-titulo"><tr><td>En constancia de la veracidad de la información aquí contenida firman:</td></tr></table>
+  <table class="tbl-firmas">
+    <tr>
+      <td>
+        {% if firma_base64 %}
+          <img src="{{ firma_base64 }}" style="height:40px;max-width:200px;object-fit:contain;display:block;margin:0 auto 8px">
+        {% else %}
+          <span class="firma-espacio"></span>
+        {% endif %}
+        <div class="firma-linea"></div>
+        <div class="firma-nombre">{{ usuario.nombre_completo }}</div>
+        <div class="firma-cc">C.C. {{ usuario.documento }}</div>
+        <div class="firma-rol">Firma Usuario Responsable</div>
+        {% if entrega_por_tercero and nombre_tercero %}
+        <div style="font-size:8px;color:#555;margin-top:4px;border-top:1px dashed #ccc;padding-top:4px">
+          Recursos entregados en representación por:<br>
+          <strong>{{ nombre_tercero }}</strong><br>
+          {{ relacion_tercero or '' }}
+        </div>
+        {% endif %}
+      </td>
+      <td style="vertical-align:middle">
+        <div style="background:#eef2f7;border:1.5px solid #c8d4e3;border-radius:8px;padding:10px 14px;text-align:center">
+          <div style="font-size:7px;text-transform:uppercase;letter-spacing:1.2px;color:#5a6a7e;margin-bottom:7px;font-weight:700">Autorizado por — Gestión TI</div>
+          {% if usuario_ti %}
+            <div style="font-size:10px;font-weight:700;color:#1a2a3a;margin-bottom:2px">{{ usuario_ti.nombre_completo }}</div>
+            {% if usuario_ti.correo %}<div style="font-size:8.5px;color:#4a5a6a;margin-bottom:5px">{{ usuario_ti.correo }}</div>{% endif %}
+          {% else %}
+            <div style="font-size:10px;font-weight:700;color:#1a2a3a;margin-bottom:5px">{{ acta.responsable_entrega or '—' }}</div>
+          {% endif %}
+          <div style="border-top:1px solid #b0bec5;padding-top:5px;margin-top:2px">
+            <div style="font-size:7px;color:#7a8a9a">Generado digitalmente</div>
+            <div style="font-size:7.5px;color:#5a6a7a;font-weight:600">{{ fecha }}</div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <table class="tbl-pie">
+    <tr>
+      <td>Emisión: {{ fecha_emision }} &nbsp;|&nbsp; Versión 2.0</td>
+      <td style="text-align:right">Pág. 1 de 1</td>
+    </tr>
+  </table>
+  <div class="copia">COPIA CONTROLADA — Una vez impresa este documento se considera copia no controlada y no nos hacemos responsables por su actualización</div>
+</div>
+
+</body>
+</html>

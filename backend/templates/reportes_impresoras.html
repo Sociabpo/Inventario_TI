@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { size: A4; margin: 14mm 12mm; }
+  body { font-family: Arial, sans-serif; font-size: 9px; color: #000; }
+
+  .tbl-header { width: 100%; border-collapse: collapse; border: 1.5px solid #000; }
+  .tbl-header td { vertical-align: middle; }
+  .td-logo { width: 130px; padding: 6px 8px; border-right: 1.5px solid #000; text-align: center; }
+  .td-logo img { width: 118px; height: auto; }
+  .td-logo span { font-size: 10px; font-weight: bold; color: #1a3a6b; }
+  .td-titulo { text-align: center; padding: 6px 4px; }
+  .td-titulo .t1 { font-size: 12px; font-weight: bold; text-transform: uppercase; }
+  .td-titulo .t2 { font-size: 9px; color: #333; margin-top: 2px; }
+  .td-meta { width: 150px; border-left: 1.5px solid #000; font-size: 8px; padding: 4px 6px; }
+  .td-meta div { margin-bottom: 1px; }
+
+  .seccion-titulo { background: #1a3a6b; color: #fff; font-weight: bold; font-size: 10px;
+    text-transform: uppercase; padding: 4px 8px; margin: 12px 0 8px; }
+
+  .rank-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; page-break-inside: avoid; }
+  .rank-lbl { width: 210px; font-size: 8.5px; }
+  .rank-bar-wrap { flex: 1; background: #eef2f7; border-radius: 3px; height: 12px; overflow: hidden; }
+  .rank-bar { height: 12px; background: #1a3a6b; }
+  .rank-n { width: 26px; text-align: right; font-size: 8.5px; font-weight: bold; }
+
+  table.rep { width: 100%; border-collapse: collapse; border: 1px solid #000; }
+  table.rep th, table.rep td { border: 1px solid #999; padding: 3px 6px; font-size: 8px; text-align: left; vertical-align: top; }
+  table.rep th { background: #eef2f8; font-weight: bold; }
+  .empty-note { font-size: 9px; color: #777; font-style: italic; padding: 8px 2px; }
+  .footer { margin-top: 12px; border-top: 1px solid #999; padding-top: 4px; font-size: 7px; color: #666; }
+</style>
+</head>
+<body>
+  <table class="tbl-header">
+    <tr>
+      <td class="td-logo">
+        {% if logo_base64 %}<img src="data:image/png;base64,{{ logo_base64 }}" alt="{{ empresa_nombre }}">{% else %}<span>{{ empresa_nombre }}</span>{% endif %}
+      </td>
+      <td class="td-titulo">
+        <div class="t1">Reporte de daños de impresoras</div>
+        <div class="t2">{{ empresa_nombre }}</div>
+      </td>
+      <td class="td-meta">
+        <div><b>Período:</b> {{ periodo }}</div>
+        <div><b>Generado:</b> {{ fecha }}</div>
+        <div><b>Total reportes:</b> {{ total }}</div>
+      </td>
+    </tr>
+  </table>
+
+  <div class="seccion-titulo">Impresoras más reportadas</div>
+  {% if ranking %}
+    {% set maxc = ranking[0].count %}
+    {% for r in ranking %}
+    <div class="rank-row">
+      <div class="rank-lbl">{{ r.modelo or '—' }}{% if r.serial %} · {{ r.serial }}{% endif %}{% if r.sede %} ({{ r.sede }}){% endif %}</div>
+      <div class="rank-bar-wrap"><div class="rank-bar" style="width: {{ (r.count / maxc * 100) | round(0, 'floor') }}%"></div></div>
+      <div class="rank-n">{{ r.count }}</div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-note">Sin reportes en el período seleccionado.</div>
+  {% endif %}
+
+  <div class="seccion-titulo">Detalle de reportes</div>
+  {% if reportes %}
+  <table class="rep">
+    <thead>
+      <tr>
+        <th style="width:70px">Fecha</th>
+        <th>Impresora</th>
+        <th style="width:90px">Serial</th>
+        <th>Sede</th>
+        <th>Descripción del daño</th>
+        <th style="width:110px">Reportó</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in reportes %}
+      <tr>
+        <td>{{ r.fecha_fmt }}</td>
+        <td>{{ r.modelo or '—' }}</td>
+        <td>{{ r.serial or '—' }}</td>
+        <td>{{ r.sede or '—' }}</td>
+        <td>{{ r.descripcion or r.snippet or '—' }}</td>
+        <td>{{ r.generado_por or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-note">No hay reportes para los filtros aplicados.</div>
+  {% endif %}
+
+  <div class="footer">Documento generado automáticamente — {{ fecha }}. Reporte de daños de impresoras alquiladas.</div>
+</body>
+</html>

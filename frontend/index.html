@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servicios TIC — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan:  #06BFFF;
+    --dark:  #0A1628;
+    --dark2: #0D2040;
+    --border: rgba(6,191,255,0.2);
+    --border2: rgba(6,191,255,0.5);
+    --text:  #E8F4FD;
+    --text2: #7BAFC8;
+    --text3: #344E66;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ── FONDO ── */
+  .bg {
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(6,191,255,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(6,191,255,0.05) 0%, transparent 50%),
+      linear-gradient(135deg, #0A1628 0%, #0D2040 50%, #0A1628 100%);
+  }
+  .bg-grid {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(6,191,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(6,191,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .orb {
+    position: fixed; border-radius: 50%;
+    filter: blur(80px); z-index: 0;
+    animation: orb 8s ease-in-out infinite;
+  }
+  .orb1 { width:400px; height:400px; background:rgba(6,191,255,0.06); top:-100px; left:-100px; }
+  .orb2 { width:300px; height:300px; background:rgba(6,191,255,0.04); bottom:-50px; right:200px; animation-delay:-4s; }
+  @keyframes orb {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50%      { transform: translate(30px,-20px) scale(1.1); }
+  }
+
+  /* ── LAYOUT ── */
+  .left {
+    flex: 1;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 60px; position: relative; z-index: 1;
+  }
+  .right {
+    width: 480px; min-height: 100vh;
+    background: rgba(6,15,35,0.6);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 50px 48px; position: relative; z-index: 1;
+  }
+
+  /* ── LEFT ── */
+  .brand {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 12px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .brand img {
+    height: 50px;
+    filter: drop-shadow(0 0 20px rgba(6,191,255,0.4));
+  }
+  .brand-sub {
+    font-size: 11px; color: var(--text3);
+    letter-spacing: 2.5px; text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .tico-wrap {
+    position: relative;
+    animation: fadeUp 0.8s ease 0.15s both;
+  }
+  .tico-wrap img {
+    height: 360px;
+    display: block;
+    filter: drop-shadow(0 20px 40px rgba(6,191,255,0.15));
+    animation: float 4s ease-in-out infinite;
+  }
+  .tico-badge {
+    position: absolute; bottom: 30px; right: -10px;
+    background: linear-gradient(135deg, var(--cyan), #0099CC);
+    color: #fff; font-size: 11px; font-weight: 700;
+    padding: 6px 14px; border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(6,191,255,0.5);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-12px); }
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 4px 20px rgba(6,191,255,0.4); }
+    50%      { box-shadow: 0 4px 30px rgba(6,191,255,0.8); }
+  }
+
+  .welcome {
+    text-align: center; margin-top: 36px;
+    animation: fadeUp 0.8s ease 0.3s both;
+  }
+  .welcome h1 {
+    font-size: 30px; font-weight: 800;
+    line-height: 1.15; margin-bottom: 10px;
+  }
+  .welcome h1 span { color: var(--cyan); }
+  .welcome p { font-size: 14px; color: var(--text2); font-weight: 300; max-width: 360px; }
+
+  .stats {
+    display: flex; gap: 24px; margin-top: 44px;
+    animation: fadeUp 0.8s ease 0.45s both;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-size: 22px; font-weight: 800; color: var(--cyan);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-lbl {
+    font-size: 9px; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;
+  }
+  .stat-div { width: 1px; background: var(--border); align-self: stretch; }
+
+  /* ── RIGHT / FORM ── */
+  .form-head {
+    text-align: center; margin-bottom: 36px;
+    animation: fadeUp 0.8s ease 0.1s both;
+  }
+  .form-icon {
+    width: 54px; height: 54px;
+    background: rgba(6,191,255,0.1);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin: 0 auto 14px;
+  }
+  .form-head h2 { font-size: 22px; font-weight: 700; margin-bottom: 5px; }
+  .form-head p  { font-size: 13px; color: var(--text2); }
+
+  .fgroup { margin-bottom: 18px; width: 100%; animation: fadeUp 0.8s ease 0.2s both; }
+  .fgroup label {
+    display: block; font-size: 10px; font-weight: 700;
+    color: var(--text2); text-transform: uppercase;
+    letter-spacing: 1.2px; margin-bottom: 7px;
+  }
+  .finput {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 14px;
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    font-size: 14px; outline: none;
+    transition: all 0.2s;
+  }
+  .finput:focus {
+    border-color: var(--cyan);
+    background: rgba(6,191,255,0.05);
+    box-shadow: 0 0 0 3px rgba(6,191,255,0.1);
+  }
+  .finput::placeholder { color: var(--text3); }
+
+  .btn-login {
+    width: 100%;
+    background: linear-gradient(135deg, #06BFFF, #0090CC);
+    border: none; border-radius: 12px;
+    padding: 14px; color: #fff;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+    margin-top: 8px; letter-spacing: 0.3px;
+    animation: fadeUp 0.8s ease 0.35s both;
+    overflow: hidden; position: relative;
+  }
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(6,191,255,0.45);
+  }
+  .btn-login::after {
+    content: '';
+    position: absolute; top: -50%; left: -60%;
+    width: 40%; height: 200%;
+    background: rgba(255,255,255,0.15);
+    transform: skewX(-20deg);
+    transition: left 0.5s;
+  }
+  .btn-login:hover::after { left: 120%; }
+
+  .err {
+    background: rgba(255,77,109,0.1);
+    border: 1px solid rgba(255,77,109,0.3);
+    border-radius: 10px; padding: 10px 14px;
+    font-size: 12px; color: #FF8099;
+    margin-top: 12px; display: none;
+    animation: shake 0.4s ease;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25%      { transform: translateX(-6px); }
+    75%      { transform: translateX(6px); }
+  }
+
+  .form-foot {
+    margin-top: 30px; text-align: center;
+    font-size: 11px; color: var(--text3);
+    animation: fadeUp 0.8s ease 0.5s both;
+    line-height: 1.8;
+  }
+  .form-foot span { color: var(--cyan); font-family: 'JetBrains Mono', monospace; }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="bg-grid"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<!-- IZQUIERDA -->
+<div class="left">
+  <div class="brand">
+    <img src="/img/ServiciosTIC_Blanco.png" alt="Servicios TIC">
+    <span class="brand-sub">Sistema de Inventario Tecnológico</span>
+  </div>
+
+  <div class="tico-wrap">
+    <img src="/img/TICO.png" alt="TICO">
+    <div class="tico-badge">¡Hola! Soy TICO 👋</div>
+  </div>
+
+  <div class="welcome">
+    <h1>Gestión de <span>Activos TIC</span><br>con trazabilidad total</h1>
+    <p>Control completo de inventario tecnológico, asignaciones y actas de entrega para todas tus empresas.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-lbl">Trazabilidad</div>
+    </div>
+    <div class="stat-div"></div>
+    <div class="stat">
+      <div class="stat-num">PDF</div>
+      <div class="stat-lbl">Actas auto</div>
+    </div>
+    <div class="stat-div"></div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-lbl">Multiempresa</div>
+    </div>
+  </div>
+</div>
+
+<!-- DERECHA / LOGIN -->
+<div class="right">
+  <div class="form-head">
+    <div class="form-icon">🔐</div>
+    <h2>Iniciar sesión</h2>
+    <p>Accede al sistema con tus credenciales</p>
+  </div>
+
+  <div class="fgroup">
+    <label>Correo electrónico</label>
+    <input class="finput" type="email" id="email"
+      placeholder="usuario@serviciostic.com" autocomplete="email">
+  </div>
+
+  <div class="fgroup">
+    <label>Contraseña</label>
+    <input class="finput" type="password" id="password"
+      placeholder="••••••••" autocomplete="current-password">
+  </div>
+
+  <button class="btn-login" id="btn-login" onclick="login()">
+    Ingresar al sistema
+  </button>
+
+  <div class="err" id="err"></div>
+
+  <div class="form-foot">
+    <p>Sistema desarrollado por</p>
+    <p><span>Servicios TIC · Socia BPO®</span></p>
+    <p>v1.0.0 · 2026</p>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8000/api';
+
+async function login() {
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn      = document.getElementById('btn-login');
+  const err      = document.getElementById('err');
+
+  if (!email || !password) {
+    showErr('Por favor completa todos los campos.');
+    return;
+  }
+
+  btn.textContent = 'Verificando...';
+  btn.style.opacity = '0.8';
+  err.style.display = 'none';
+
+  try {
+    const form = new FormData();
+    form.append('username', email);
+    form.append('password', password);
+
+    const res = await fetch(`${API}/auth/login`, { method:'POST', body:form });
+
+    if (!res.ok) {
+      showErr('Correo o contraseña incorrectos.');
+      btn.textContent = 'Ingresar al sistema';
+      btn.style.opacity = '1';
+      return;
+    }
+
+    const data = await res.json();
+    sessionStorage.setItem('token',   data.access_token);
+    sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
+
+    btn.textContent = '✓ Acceso concedido';
+    setTimeout(() => window.location.href = 'dashboard.html', 600);
+
+  } catch(e) {
+    showErr('Error de conexión. Verifica que el servidor esté activo.');
+    btn.textContent = 'Ingresar al sistema';
+    btn.style.opacity = '1';
+  }
+}
+
+function showErr(msg) {
+  const el = document.getElementById('err');
+  el.textContent = '❌ ' + msg;
+  el.style.display = 'block';
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = 'shake 0.4s ease';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') login();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; font-size: 9px; color: #000; padding: 12px 16px; }
+
+  .tbl-header { width: 100%; border-collapse: collapse; border: 1.5px solid #000; }
+  .tbl-header td { vertical-align: middle; }
+  .td-logo { width: 130px; padding: 6px 8px; border-right: 1.5px solid #000; text-align: center; }
+  .td-logo img { width: 118px; height: auto; }
+  .td-titulo { text-align: center; padding: 6px 4px; }
+  .td-titulo .t1 { font-size: 11px; font-weight: bold; text-transform: uppercase; }
+  .td-titulo .t2 { font-size: 9px; color: #333; margin-top: 2px; }
+  .td-meta { width: 150px; border-left: 1.5px solid #000; font-size: 8px; padding: 4px 6px; }
+  .td-meta div { margin-bottom: 1px; }
+
+  .tbl-equipo { width: 100%; border-collapse: collapse; border: 1.5px solid #000; border-top: none; margin-bottom: 6px; }
+  .tbl-equipo td { padding: 3px 8px; font-size: 9px; border-right: 1px solid #ccc; }
+  .tbl-equipo td:last-child { border-right: none; }
+  .tbl-equipo .lbl { font-weight: bold; color: #333; }
+
+  .seccion-titulo { background: #1a3a6b; color: #fff; font-weight: bold; font-size: 9.5px;
+    text-transform: uppercase; padding: 4px 8px; margin-top: 6px; }
+  table.items { width: 100%; border-collapse: collapse; border: 1px solid #000; }
+  table.items th, table.items td { border: 1px solid #999; padding: 3px 8px; font-size: 8.5px; text-align: left; }
+  table.items th { background: #eef2f8; font-weight: bold; }
+  table.items td.res { text-align: center; width: 70px; font-weight: bold; }
+  .obs-box { border: 1px solid #000; padding: 6px 8px; margin-top: 6px; font-size: 9px; min-height: 34px; }
+  .obs-box .lbl { font-weight: bold; display: block; margin-bottom: 2px; }
+
+  .firma { margin-top: 22px; width: 100%; }
+  .firma td { text-align: center; font-size: 9px; padding-top: 4px; }
+  .firma .line { border-top: 1px solid #000; width: 200px; margin: 0 auto; padding-top: 3px; }
+
+  .footer { margin-top: 14px; border-top: 1px solid #999; padding-top: 4px;
+    font-size: 7.5px; color: #555; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+  <table class="tbl-header">
+    <tr>
+      <td class="td-logo">
+        {% if logo_base64 %}<img src="data:image/png;base64,{{ logo_base64 }}" alt="Servicios TIC">{% else %}<span>Servicios TIC</span>{% endif %}
+      </td>
+      <td class="td-titulo">
+        <div class="t1">Acta de Mantenimiento Preventivo</div>
+        <div class="t2">{{ plan.nombre }}</div>
+      </td>
+      <td class="td-meta">
+        <div><b>Código:</b> {{ plan.codigo_formato or '—' }}</div>
+        <div><b>Versión:</b> {{ plan.version_formato or '—' }}</div>
+        <div><b>Clasificación:</b> {{ plan.clasificacion or '—' }}</div>
+        <div><b>Proceso:</b> {{ plan.proceso or '—' }}</div>
+      </td>
+    </tr>
+  </table>
+
+  <table class="tbl-equipo">
+    <tr>
+      <td><span class="lbl">Fecha:</span> {{ fecha }}</td>
+      <td><span class="lbl">Empresa:</span> {{ empresa.nombre_empresa if empresa else '—' }}</td>
+      <td><span class="lbl">Técnico:</span> {{ tecnico_nombre or '—' }}</td>
+    </tr>
+    <tr>
+      <td><span class="lbl">Placa:</span> {{ activo.id_placa_activo }}</td>
+      <td><span class="lbl">Tipo:</span> {{ activo.tipo_activo or '—' }}</td>
+      <td><span class="lbl">Serial:</span> {{ activo.serial or '—' }}</td>
+    </tr>
+    <tr>
+      <td><span class="lbl">Marca:</span> {{ activo.marca or '—' }}</td>
+      <td><span class="lbl">Modelo:</span> {{ activo.modelo or '—' }}</td>
+      <td><span class="lbl">Periodicidad:</span> {{ plan.periodicidad_meses }} meses</td>
+    </tr>
+  </table>
+
+  {# ── Diagnóstico (ítems 'dato') ── #}
+  {% if datos %}
+  <div class="seccion-titulo">Diagnóstico</div>
+  <table class="items">
+    <tr><th>Parámetro</th><th style="width:160px">Valor</th></tr>
+    {% for it in datos %}
+    <tr><td>{{ it.texto }}</td><td>{{ it.valor_dato or '—' }}</td></tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  {# ── Secciones de checks (hardware / software / diagnóstico-check) ── #}
+  {% for sec in secciones_check %}
+  <div class="seccion-titulo">{{ sec.titulo }}</div>
+  <table class="items">
+    <tr><th>Actividad</th><th class="res">Resultado</th></tr>
+    {% for it in sec.filas %}
+    <tr>
+      <td>{{ it.texto }}</td>
+      <td class="res">{% if it.realizado is none %}N/A{% elif it.realizado %}Sí{% else %}No{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endfor %}
+
+  <div class="obs-box">
+    <span class="lbl">Observaciones</span>
+    {{ observaciones or 'Sin observaciones.' }}
+  </div>
+
+  <table class="firma">
+    <tr>
+      <td><div class="line">{{ tecnico_nombre or '' }}<br>Técnico responsable</div></td>
+    </tr>
+  </table>
+
+  <div class="footer">
+    <span>Fecha de emisión: {{ fecha_emision_formato or fecha }} · Versión {{ plan.version_formato or '—' }}</span>
+    <span>Copia controlada</span>
+  </div>
+</body>
+</html>

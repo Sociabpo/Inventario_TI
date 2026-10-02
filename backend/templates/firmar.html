@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Firma de Acta — {{ empresa.nombre_empresa }}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #07101f;
+    color: #e0e6f0;
+    min-height: 100vh;
+    padding: 0 0 40px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #0e1c34;
+    border-bottom: 1px solid #1e3256;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-icon { font-size: 24px; }
+  .header-title { font-size: 15px; font-weight: 700; color: #06bfff; }
+  .header-sub   { font-size: 11px; color: #5a7a9a; margin-top: 2px; }
+
+  /* ── CONTENIDO ── */
+  .content { max-width: 560px; margin: 0 auto; padding: 20px 16px; }
+
+  /* ── CARD ── */
+  .card {
+    background: #0e1c34;
+    border: 1px solid #1e3256;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .card-head {
+    padding: 10px 16px;
+    background: #0a1628;
+    border-bottom: 1px solid #1e3256;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4a6a8a;
+  }
+  .card-body { padding: 14px 16px; }
+
+  /* ── INFO EMPLEADO ── */
+  .emp-name { font-size: 18px; font-weight: 800; color: #06bfff; margin-bottom: 4px; }
+  .emp-meta { font-size: 12px; color: #5a7a9a; }
+  .emp-cargo { font-size: 12px; color: #8899aa; margin-top: 2px; }
+
+  /* ── TABLA ÍTEMS ── */
+  .item-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #162030;
+  }
+  .item-row:last-child { border-bottom: none; }
+  .item-icon { font-size: 18px; flex-shrink: 0; }
+  .item-placa {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    background: rgba(6,191,255,0.1);
+    color: #06bfff;
+    border: 1px solid rgba(6,191,255,0.2);
+    border-radius: 6px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+  }
+  .item-desc { font-size: 12px; color: #a0b4c8; }
+  .item-tipo { font-size: 10px; color: #4a6a8a; }
+  .no-items { padding: 12px 0; color: #4a6a8a; font-size: 12px; text-align: center; }
+
+  /* ── BOTÓN VER ACTA ── */
+  .btn-ver-acta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: rgba(6,191,255,0.07);
+    border: 1px solid rgba(6,191,255,0.25);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: #06bfff;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 14px;
+    transition: background 0.2s;
+  }
+  .btn-ver-acta:active { background: rgba(6,191,255,0.14); }
+  .btn-ver-acta .arrow { font-size: 15px; }
+
+  /* ── AVISO ── */
+  .aviso {
+    background: rgba(255, 176, 32, 0.07);
+    border: 1px solid rgba(255, 176, 32, 0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #c8952a;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  /* ── RADIO ── */
+  .radio-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #a0b4c8;
+    line-height: 1.5;
+    padding: 8px 0;
+  }
+  .radio-label + .radio-label { border-top: 1px solid #162030; }
+  .radio-label input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    accent-color: #06bfff;
+    cursor: pointer;
+  }
+  .radio-label.selected { color: #e0e6f0; }
+
+  /* ── NOMBRE INPUT ── */
+  .nombre-input {
+    width: 100%;
+    background: #07101f;
+    border: 1px solid #1e3256;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #e0e6f0;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .nombre-input:focus { border-color: #06bfff; }
+  .nombre-input::placeholder { color: #2a4060; }
+  .nombre-label { font-size: 11px; color: #5a7a9a; margin-bottom: 6px; display: block; }
+
+  /* ── CANVAS ── */
+  .canvas-wrap {
+    position: relative;
+    border: 2px dashed #1e3256;
+    border-radius: 12px;
+    background: #07101f;
+    overflow: hidden;
+    touch-action: none;
+  }
+  .canvas-wrap.has-signature { border-color: rgba(6,191,255,0.4); border-style: solid; }
+  #firma-canvas { display: block; width: 100%; cursor: crosshair; }
+  .canvas-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13px;
+    color: #2a4060;
+    pointer-events: none;
+    text-align: center;
+    line-height: 1.5;
+    transition: opacity 0.2s;
+  }
+
+  /* ── TEXTAREA OBSERVACIONES ── */
+  .obs-textarea {
+    width: 100%;
+    background: #07101f;
+    border: 1px solid #1e3256;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #e0e6f0;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s;
+  }
+  .obs-textarea:focus { border-color: #06bfff; }
+  .obs-textarea::placeholder { color: #2a4060; }
+
+  /* ── DESCARGO ── */
+  .btn-descargo {
+    width: 100%;
+    background: rgba(6,191,255,0.07);
+    border: 1px solid rgba(6,191,255,0.25);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #06bfff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.2s;
+  }
+  .btn-descargo:active { background: rgba(6,191,255,0.14); }
+  .descargo-texto {
+    display: none;
+    margin-top: 10px;
+    font-size: 11.5px;
+    color: #8899aa;
+    line-height: 1.7;
+    text-align: justify;
+    border-top: 1px solid #1e3256;
+    padding-top: 10px;
+  }
+  .descargo-texto p { margin-bottom: 8px; }
+  .descargo-texto strong { color: #c8d4e0; }
+
+  /* ── BOTONES ── */
+  .btn-row { display: flex; gap: 10px; margin-top: 12px; }
+  .btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-clear {
+    background: rgba(255,77,109,0.12);
+    color: #ff4d6d;
+    border: 1px solid rgba(255,77,109,0.3);
+  }
+  .btn-submit {
+    background: linear-gradient(135deg, #06bfff, #0580c0);
+    color: #fff;
+  }
+  .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── ESTADOS ── */
+  .estado { display: none; text-align: center; padding: 40px 20px; }
+  .estado.visible { display: block; }
+  .estado-icon { font-size: 56px; margin-bottom: 16px; }
+  .estado-titulo { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+  .estado-sub { font-size: 13px; color: #5a7a9a; line-height: 1.6; }
+  .estado-ok .estado-titulo { color: #2ecc71; }
+  .estado-err .estado-titulo { color: #ff4d6d; }
+
+  /* ── SPINNER ── */
+  .spinner {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">✍</div>
+  <div>
+    <div class="header-title">Firma Digital de Acta</div>
+    <div class="header-sub">{{ empresa.nombre_empresa }} — {{ acta.tipo|capitalize }}</div>
+  </div>
+</div>
+
+<div class="content" id="main-content">
+
+  <!-- INFO EMPLEADO -->
+  <div class="card">
+    <div class="card-head">{% if acta.tipo == 'devolucion' %}Empleado que devuelve{% else %}Empleado que firma{% endif %}</div>
+    <div class="card-body">
+      <div class="emp-name">{{ usuario.nombre_completo }}</div>
+      <div class="emp-meta">C.C. {{ usuario.documento }}</div>
+      <div class="emp-cargo">{{ usuario.cargo or '' }}{% if usuario.sede %} · {{ usuario.sede }}{% endif %}</div>
+    </div>
+  </div>
+
+  <!-- ÍTEMS ASIGNADOS -->
+  <div class="card">
+    <div class="card-head">{% if acta.tipo == 'devolucion' %}Equipos y accesorios devueltos{% else %}Equipos y accesorios entregados{% endif %}</div>
+    <div class="card-body">
+      {% if activos %}
+        {% for a in activos %}
+        <div class="item-row">
+          <div class="item-icon">🖥</div>
+          <div class="item-placa">{{ a.id_placa_activo }}</div>
+          <div>
+            <div class="item-desc">{{ a.tipo_activo }}{% if a.marca %} {{ a.marca }}{% endif %}{% if a.modelo %} {{ a.modelo }}{% endif %}</div>
+            <div class="item-tipo">{% if a.serial %}S/N: {{ a.serial }}{% endif %}</div>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if accesorios %}
+        {% for acc in accesorios %}
+        <div class="item-row">
+          <div class="item-icon">🖱</div>
+          <div class="item-placa">{{ acc.id_placa_accesorio }}</div>
+          <div>
+            <div class="item-desc">{{ acc.tipo_accesorio }}{% if acc.marca %} {{ acc.marca }}{% endif %}{% if acc.modelo %} {{ acc.modelo }}{% endif %}</div>
+            <div class="item-tipo">{% if acc.serial %}S/N: {{ acc.serial }}{% endif %}</div>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if not activos and not accesorios %}
+        <div class="no-items">Sin ítems registrados en esta acta</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- VER ACTA COMPLETA (PDF) -->
+  <a class="btn-ver-acta" href="/firmar/{{ token }}/acta-pdf" target="_blank" rel="noopener">
+    <span>📄 Ver acta completa antes de firmar</span>
+    <span class="arrow">↗</span>
+  </a>
+
+  <!-- ════ VERIFICACIÓN DE IDENTIDAD (OTP) — solo para actas de entrega ════ -->
+  {% if acta.tipo != 'devolucion' %}
+  <div class="card" id="otp-card" style="border-color:rgba(6,191,255,0.4)">
+    <div class="card-head">🛡 Verificación de identidad requerida</div>
+    <div class="card-body">
+      <div style="font-size:13px;color:#a0b4c8;line-height:1.55;margin-bottom:14px">
+        Para garantizar la validez legal de tu firma, debes verificar tu identidad con un código
+        enviado a tu correo <strong style="color:#06bfff">{{ correo_parcial }}</strong>.
+      </div>
+      <button class="btn btn-submit" id="btn-solicitar-otp" onclick="solicitarOtp()" style="width:100%">
+        Enviar código a mi correo
+      </button>
+
+      <div id="otp-sent-section" style="display:none;margin-top:16px">
+        <div style="font-size:12px;color:#2ecc71;text-align:center;margin-bottom:12px">✓ Código enviado. Revisa tu correo.</div>
+        <input id="otp-input" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="••••••"
+               style="display:block;width:200px;max-width:100%;margin:0 auto 12px;font-size:24px;text-align:center;letter-spacing:8px;background:#07101f;border:1px solid #1e3256;border-radius:10px;padding:12px 10px;color:#e0e6f0;outline:none">
+        <div style="text-align:center;font-size:12px;color:#5a7a9a;margin-bottom:14px">
+          Código válido por: <strong id="otp-countdown" style="color:#06bfff">10:00</strong>
+        </div>
+        <button class="btn btn-submit" id="btn-verificar-otp" onclick="verificarOtp()" style="width:100%">
+          Verificar código
+        </button>
+        <div style="text-align:center;margin-top:12px">
+          <a id="btn-reenviar-otp" onclick="solicitarOtp()" style="display:none;color:#06bfff;font-size:12px;cursor:pointer;text-decoration:underline">Reenviar código</a>
+        </div>
+      </div>
+
+      <div id="otp-error" style="display:none;margin-top:12px;background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);color:#ff4d6d;border-radius:8px;padding:10px 12px;font-size:12px;text-align:center"></div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if acta.tipo == 'devolucion' %}
+
+  <!-- SECTION 1: ¿Quién entrega? (solo devolución) -->
+  <div class="card requires-otp" style="opacity:0.4;pointer-events:none;transition:opacity 0.3s">
+    <div class="card-head">¿Quién entrega los recursos?</div>
+    <div class="card-body" style="padding:8px 16px">
+      <label class="radio-label selected" id="label-directo">
+        <input type="radio" name="entrega-quien" id="radio-directo" value="directo" checked onchange="cambiarEntregador()">
+        <span>El empleado <strong>{{ usuario.nombre_completo }}</strong> los entrega directamente</span>
+      </label>
+      <label class="radio-label" id="label-tercero">
+        <input type="radio" name="entrega-quien" id="radio-tercero" value="tercero" onchange="cambiarEntregador()">
+        <span>Un tercero entrega en representación del empleado</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Datos del tercero (oculto por defecto) -->
+  <div class="card requires-otp" id="card-tercero" style="display:none;opacity:0.4;pointer-events:none;transition:opacity 0.3s">
+    <div class="card-head">Datos del representante</div>
+    <div class="card-body">
+      <label class="nombre-label" for="input-tercero-nombre">Nombre completo del representante *</label>
+      <input
+        id="input-tercero-nombre"
+        class="nombre-input"
+        type="text"
+        placeholder="Ej: Carlos Martínez López"
+        autocomplete="name"
+        oninput="validarTercero()"
+        style="margin-bottom:12px"
+      >
+      <label class="nombre-label" for="input-tercero-relacion">Relación con el empleado *</label>
+      <input
+        id="input-tercero-relacion"
+        class="nombre-input"
+        type="text"
+        placeholder="Ej: Jefe directo, Recursos Humanos, Coordinador de área"
+        oninput="validarTercero()"
+      >
+    </div>
+  </div>
+
+  <!-- AVISO LEGAL devolución -->
+  <div class="aviso requires-otp" style="opacity:0.4;pointer-events:none;transition:opacity 0.3s">
+    Al firmar confirmo que estoy devolviendo voluntariamente los recursos detallados a
+    <strong>{{ empresa.nombre_empresa }}</strong>.
+    Esta firma tiene validez legal y quedará registrada en el acta de devolución.
+  </div>
+
+  <!-- SECTION 3: Firma del empleado que devuelve -->
+  <div class="card requires-otp" style="opacity:0.4;pointer-events:none;transition:opacity 0.3s">
+    <div class="card-head">Firma del empleado que devuelve <span style="color:#4a6a8a;font-weight:400;text-transform:none">(dibuja con el dedo o el mouse)</span></div>
+    <div class="card-body">
+      <div class="canvas-wrap" id="canvas-wrap">
+        <canvas id="firma-canvas" height="180"></canvas>
+        <div class="canvas-hint" id="canvas-hint">Firma aquí<br><span style="font-size:11px;color:#1e3256">↑ desliza el dedo</span></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-clear" onclick="limpiarFirma()">↺ Limpiar</button>
+        <button class="btn btn-submit" id="btn-firmar" onclick="enviarFirma()" disabled>✓ Confirmar devolución</button>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+
+  <!-- DESCARGO DE RESPONSABILIDADES -->
+  <div class="card requires-otp" style="opacity:0.4;pointer-events:none;transition:opacity 0.3s">
+    <div class="card-body" style="padding:10px 16px">
+      <button class="btn-descargo" onclick="toggleDescargo(this)" type="button">
+        <span>📄 Ver descargo de responsabilidades</span>
+        <span id="descargo-arrow">▾</span>
+      </button>
+      <div class="descargo-texto" id="descargo-texto">
+        <p>Yo <strong>{{ usuario.nombre_completo }}</strong>, mayor de edad, identificado como aparece al pie de mi firma, obrando en mi propio nombre y representación, declaro que he recibido de mi empleador, la: (Nombre y descripción del dispositivo tecnológico o elemento que se le entrega al trabajador, si son varios, se debe de individualizar uno a uno).</p>
+        <p>Me comprometo a familiarizarme y cumplir con las políticas de seguridad de la información establecidas por la compañía. Esto incluye la <strong>PLIN01 - POLÍTICA DE SEGURIDAD GENERAL</strong> y la <strong>PLIN02 - USO ADECUADO DE ACTIVOS</strong>, así como cualquier otra política vinculada a las responsabilidades corporativas. Es esencial que entienda y respete estas directrices para garantizar la integridad y confidencialidad de los datos corporativos durante el ejercicio de sus funciones.</p>
+        <p>Adicionalmente me obligo a devolverla en el mismo estado en que me fue entregada, de manera completa y oportuna.</p>
+        <p>En el evento de que por cualquier circunstancia <strong>NO DEVUELVA EL/LOS DISPOSITIVOS TECNOLÓGICOS</strong> por cualquier razón, realice un mal uso de ella, el cual deberá ser demostrable (mas no por el deterioro normal de uso), <strong>AUTORIZO</strong> a la empresa para que de mi salario mensual se me deduzca el valor de la misma. En el evento de que mi contrato de trabajo termine por cualquier motivo, autorizo a mi empleador de manera expresa para que de mis salarios, prestaciones sociales legales o extralegales, vacaciones e indemnización de cualquier naturaleza, me sea deducido el saldo insoluto de la obligación antes indicada.</p>
+        <p><strong>En Caso de Devolución:</strong> Con la firma del presente documento, el colaborador realiza devolución de los activos tecnológicos que le fueron asignados por la compañía y garantiza: 1. El buen estado de los mismos. 2. Que no hubo manipulación indebida de hardware o software. 3. Que realizó entrega de la información más relevante a la persona responsable del proceso. De esta manera queda a paz y salvo con el área de gestión TI.</p>
+        <p>En caso de no cumplir con las condiciones de devolución de activos tecnológicos, el área gestión TI en conjunto con el área de gestión humana determinará responsabilidades y procederá con las acciones estipuladas de cobro.</p>
+        <p>¿Deseas usar el correo corporativo en tu dispositivo móvil personal? En caso de ser afirmativo, autorizo a la empresa realizar las validaciones correspondientes en la eliminación de la cuenta de correo corporativo en mi dispositivo móvil al momento de mi retiro de la organización. Así mismo me comprometo a cuidar la integridad y confidencialidad de la información que se encuentre en mi dispositivo móvil mientras cuente con este acceso.</p>
+        <p>En el caso de los dispositivos tecnológicos la empresa puede realizar en el momento que considere necesario el acceso a la información allí contenida.</p>
+        <p>Para constancia se lee y se firma en {{ empresa.ciudad or 'Medellín' }} a los {{ fecha_constancia }}.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBSERVACIONES DEL EMPLEADO -->
+  <div class="card requires-otp" style="opacity:0.4;pointer-events:none;transition:opacity 0.3s">
+    <div class="card-head">Observaciones (estado físico del equipo)</div>
+    <div class="card-body">
+      <label class="nombre-label" for="obs-firma">
+        ¿Tienes alguna observación sobre el estado físico de los equipos recibidos? (opcional)
+      </label>
+      <textarea
+        id="obs-firma"
+        class="obs-textarea"
+        placeholder="Ej: El equipo presenta rayón en la tapa, falta una tecla del teclado..."
+      ></textarea>
+    </div>
+  </div>
+
+  <!-- CORREO CORPORATIVO MÓVIL -->
+  <div class="card requires-otp" style="opacity:0.4;pointer-events:none;transition:opacity 0.3s">
+    <div class="card-head">Correo corporativo en dispositivo móvil personal</div>
+    <div class="card-body" style="padding:8px 16px">
+      <div style="font-size:13px;color:#a0b4c8;margin-bottom:10px;line-height:1.5">
+        ¿Deseas usar el correo corporativo en tu dispositivo móvil personal?
+      </div>
+      <label class="radio-label" id="label-correo-si">
+        <input type="radio" name="correo-movil" id="radio-correo-si" value="si" onchange="actualizarCorreo()">
+        <span><strong>Sí</strong> — Autorizo a la empresa a eliminar la cuenta corporativa de mi dispositivo al momento de mi retiro</span>
+      </label>
+      <label class="radio-label" id="label-correo-no">
+        <input type="radio" name="correo-movil" id="radio-correo-no" value="no" onchange="actualizarCorreo()">
+        <span><strong>No</strong> — No usaré el correo corporativo en mi dispositivo personal</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- AVISO LEGAL entrega -->
+  <div class="aviso requires-otp" style="opacity:0.4;pointer-events:none;transition:opacity 0.3s">
+    Al firmar confirmo haber recibido los equipos detallados en buen estado y me comprometo a cumplir
+    con las políticas de uso de activos tecnológicos de <strong>{{ empresa.nombre_empresa }}</strong>.
+    Esta firma tiene validez legal y quedará registrada en el acta de entrega.
+  </div>
+
+  <!-- FIRMA entrega -->
+  <div class="card requires-otp" style="opacity:0.4;pointer-events:none;transition:opacity 0.3s">
+    <div class="card-head">Firma del empleado <span style="color:#4a6a8a;font-weight:400;text-transform:none">(dibuja con el dedo o el mouse)</span></div>
+    <div class="card-body" style="padding:12px">
+      <div class="canvas-wrap" id="canvas-wrap">
+        <canvas id="firma-canvas" height="180"></canvas>
+        <div class="canvas-hint" id="canvas-hint">Firma aquí<br><span style="font-size:11px;color:#1e3256">↑ desliza el dedo</span></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-clear" onclick="limpiarFirma()">↺ Limpiar</button>
+        <button class="btn btn-submit" id="btn-firmar" onclick="enviarFirma()" disabled>✓ Confirmar firma</button>
+      </div>
+    </div>
+  </div>
+
+  {% endif %}
+
+</div><!-- /main-content -->
+
+<!-- ESTADO: ÉXITO -->
+<div class="estado estado-ok" id="estado-ok">
+  <div class="estado-icon">✅</div>
+  <div class="estado-titulo" id="ok-titulo">¡Acta firmada!</div>
+  <div class="estado-sub" id="ok-sub">
+    Tu firma ha sido registrada correctamente.<br>
+    El acta PDF ha sido actualizada con tu firma.<br><br>
+    Puedes cerrar esta ventana.
+  </div>
+</div>
+
+<!-- ESTADO: ERROR -->
+<div class="estado estado-err" id="estado-err">
+  <div class="estado-icon">❌</div>
+  <div class="estado-titulo">Error al firmar</div>
+  <div class="estado-sub" id="err-msg">Ocurrió un error al procesar tu firma. Por favor contacta al equipo de TI.</div>
+</div>
+
+<script>
+const TOKEN       = '{{ token }}';
+const TOKEN_FIRMA = '{{ token }}';
+const TIPO_ACTA = '{{ acta.tipo }}';
+
+// ── Verificación OTP de identidad ──────────────────────────
+let otpVerificado = false;
+let countdownInterval = null;
+
+async function solicitarOtp() {
+  const btn = document.getElementById('btn-solicitar-otp');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  document.getElementById('otp-error').style.display = 'none';
+  try {
+    const res = await fetch(`/firmar/${TOKEN_FIRMA}/solicitar-otp`, { method: 'POST' });
+    const data = await res.json();
+    if (res.ok) {
+      document.getElementById('btn-solicitar-otp').style.display = 'none';
+      document.getElementById('otp-sent-section').style.display = 'block';
+      const reenviar = document.getElementById('btn-reenviar-otp');
+      if (reenviar) reenviar.style.display = 'none';
+      const bv = document.getElementById('btn-verificar-otp');
+      bv.disabled = false; bv.textContent = 'Verificar código';
+      iniciarCountdown(600);
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Enviar código a mi correo';
+      mostrarErrorOtp(data.detail || 'Error al enviar el código');
+    }
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = 'Enviar código a mi correo';
+    mostrarErrorOtp('Error de conexión');
+  }
+}
+
+async function verificarOtp() {
+  const codigo = document.getElementById('otp-input').value.trim();
+  if (codigo.length !== 6) { mostrarErrorOtp('Ingresa el código de 6 dígitos'); return; }
+  const btn = document.getElementById('btn-verificar-otp');
+  btn.disabled = true;
+  btn.textContent = 'Verificando...';
+  document.getElementById('otp-error').style.display = 'none';
+  try {
+    const res = await fetch(`/firmar/${TOKEN_FIRMA}/verificar-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ codigo })
+    });
+    const data = await res.json();
+    if (res.ok && data.verificado) {
+      otpVerificado = true;
+      clearInterval(countdownInterval);
+      document.getElementById('otp-card').innerHTML = `
+        <div style="background:rgba(46,204,113,0.12);border:1px solid #2ecc71;border-radius:12px;padding:16px;text-align:center;color:#2ecc71">
+          <div style="font-size:15px;font-weight:700">✓ Identidad verificada</div>
+          <div style="font-size:12px;color:#7fd4a8;margin-top:4px">Puedes proceder a firmar el acta</div>
+        </div>`;
+      habilitarFormulario();
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Verificar código';
+      mostrarErrorOtp(data.detail || 'Código incorrecto');
+    }
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = 'Verificar código';
+    mostrarErrorOtp('Error de conexión');
+  }
+}
+
+function iniciarCountdown(seconds) {
+  let remaining = seconds;
+  const el = document.getElementById('otp-countdown');
+  clearInterval(countdownInterval);
+  countdownInterval = setInterval(() => {
+    remaining--;
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    el.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+    if (remaining <= 540) {
+      const r = document.getElementById('btn-reenviar-otp');
+      if (r) r.style.display = 'inline-block';
+    }
+    if (remaining <= 0) {
+      clearInterval(countdownInterval);
+      el.textContent = 'Expirado';
+      mostrarErrorOtp('El código ha expirado. Solicita uno nuevo.');
+    }
+  }, 1000);
+}
+
+function habilitarFormulario() {
+  document.querySelectorAll('.requires-otp').forEach(el => {
+    el.style.opacity = '1';
+    el.style.pointerEvents = 'auto';
+  });
+}
+
+function mostrarErrorOtp(msg) {
+  const el = document.getElementById('otp-error');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+
+// Las actas de devolución no requieren OTP → habilitar el formulario de inmediato
+if (TIPO_ACTA === 'devolucion') {
+  otpVerificado = true;
+  habilitarFormulario();
+}
+
+const canvas    = document.getElementById('firma-canvas');
+const ctx       = canvas.getContext('2d');
+const hint      = document.getElementById('canvas-hint');
+const btnFirmar = document.getElementById('btn-firmar');
+const canvasWrap = document.getElementById('canvas-wrap');
+let dibujando = false;
+let tieneFirma = false;
+
+// ── State for devolucion flow ──────────────────────────────
+let receptorValido   = true; // employee always valid — no extra name input needed
+let terceroActivo    = false;
+let terceroNombreOk  = false;
+let terceroRelOk     = false;
+
+function _actualizarBoton() {
+  const terceroOk = !terceroActivo || (terceroNombreOk && terceroRelOk);
+  btnFirmar.disabled = !(tieneFirma && receptorValido && terceroOk);
+}
+
+function validarTercero() {
+  const n = document.getElementById('input-tercero-nombre');
+  const r = document.getElementById('input-tercero-relacion');
+  terceroNombreOk = n && n.value.trim().length >= 3;
+  terceroRelOk    = r && r.value.trim().length >= 3;
+  _actualizarBoton();
+}
+
+function cambiarEntregador() {
+  terceroActivo = document.getElementById('radio-tercero').checked;
+  const card = document.getElementById('card-tercero');
+  if (card) card.style.display = terceroActivo ? '' : 'none';
+  // Update label styles
+  document.getElementById('label-directo').classList.toggle('selected', !terceroActivo);
+  document.getElementById('label-tercero').classList.toggle('selected',  terceroActivo);
+  if (!terceroActivo) { terceroNombreOk = false; terceroRelOk = false; }
+  _actualizarBoton();
+}
+
+function toggleDescargo(btn) {
+  const texto = document.getElementById('descargo-texto');
+  const arrow = document.getElementById('descargo-arrow');
+  const visible = texto.style.display === 'block';
+  texto.style.display = visible ? 'none' : 'block';
+  arrow.textContent   = visible ? '▾' : '▴';
+}
+
+function actualizarCorreo() {
+  const si = document.getElementById('label-correo-si');
+  const no = document.getElementById('label-correo-no');
+  if (si) si.classList.toggle('selected', document.getElementById('radio-correo-si').checked);
+  if (no) no.classList.toggle('selected', document.getElementById('radio-correo-no').checked);
+}
+
+// ── Canvas setup ───────────────────────────────────────────
+function ajustarCanvas() {
+  const rect = canvasWrap.getBoundingClientRect();
+  const dpr  = window.devicePixelRatio || 1;
+  canvas.width  = rect.width * dpr;
+  canvas.height = 180 * dpr;
+  canvas.style.width  = rect.width + 'px';
+  canvas.style.height = '180px';
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#06bfff';
+  ctx.lineWidth   = 2.5;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+}
+ajustarCanvas();
+window.addEventListener('resize', () => { if (!tieneFirma) ajustarCanvas(); });
+
+function getPosicion(e) {
+  const rect = canvas.getBoundingClientRect();
+  const src  = e.touches ? e.touches[0] : e;
+  return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+}
+function iniciarTrazo(e) {
+  e.preventDefault(); dibujando = true;
+  const { x, y } = getPosicion(e);
+  ctx.beginPath(); ctx.moveTo(x, y);
+}
+function continuar(e) {
+  e.preventDefault();
+  if (!dibujando) return;
+  const { x, y } = getPosicion(e);
+  ctx.lineTo(x, y); ctx.stroke();
+  if (!tieneFirma) {
+    tieneFirma = true;
+    hint.style.opacity = '0';
+    canvasWrap.classList.add('has-signature');
+    _actualizarBoton();
+  }
+}
+function terminarTrazo(e) { if (e) e.preventDefault(); dibujando = false; }
+
+canvas.addEventListener('mousedown',  iniciarTrazo);
+canvas.addEventListener('mousemove',  continuar);
+canvas.addEventListener('mouseup',    terminarTrazo);
+canvas.addEventListener('mouseleave', terminarTrazo);
+canvas.addEventListener('touchstart', iniciarTrazo,  { passive: false });
+canvas.addEventListener('touchmove',  continuar,     { passive: false });
+canvas.addEventListener('touchend',   terminarTrazo, { passive: false });
+
+function limpiarFirma() {
+  const dpr = window.devicePixelRatio || 1;
+  ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+  tieneFirma = false;
+  hint.style.opacity = '1';
+  canvasWrap.classList.remove('has-signature');
+  _actualizarBoton();
+}
+
+// ── Submit ─────────────────────────────────────────────────
+async function enviarFirma() {
+  if (!tieneFirma || !receptorValido) return;
+  if (terceroActivo && (!terceroNombreOk || !terceroRelOk)) return;
+
+  btnFirmar.disabled = true;
+  btnFirmar.innerHTML = '<span class="spinner"></span> Enviando...';
+
+  const body = { firma_base64: canvas.toDataURL('image/png') };
+
+  if (TIPO_ACTA === 'devolucion') {
+    body.entrega_por_tercero = terceroActivo;
+    if (terceroActivo) {
+      body.nombre_tercero   = document.getElementById('input-tercero-nombre').value.trim();
+      body.relacion_tercero = document.getElementById('input-tercero-relacion').value.trim();
+    }
+  } else {
+    const obs = document.getElementById('obs-firma');
+    body.observaciones_firma = obs && obs.value.trim() ? obs.value.trim() : null;
+    const radioSi = document.getElementById('radio-correo-si');
+    const radioNo = document.getElementById('radio-correo-no');
+    if (radioSi && radioSi.checked)      body.correo_movil = true;
+    else if (radioNo && radioNo.checked) body.correo_movil = false;
+    else                                 body.correo_movil = null;
+  }
+
+  try {
+    const res  = await fetch(`/firmar/${TOKEN}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const json = await res.json();
+    if (res.ok) {
+      if (TIPO_ACTA === 'devolucion') {
+        document.getElementById('ok-titulo').textContent = '¡Devolución confirmada!';
+        document.getElementById('ok-sub').innerHTML =
+          'La recepción del equipo ha sido registrada con tu firma.<br>' +
+          'El acta PDF ha sido actualizada.<br><br>Puedes cerrar esta ventana.';
+      }
+      document.getElementById('main-content').style.display = 'none';
+      document.getElementById('estado-ok').classList.add('visible');
+    } else {
+      document.getElementById('err-msg').textContent = json.detail || 'Error desconocido';
+      document.getElementById('main-content').style.display = 'none';
+      document.getElementById('estado-err').classList.add('visible');
+    }
+  } catch (err) {
+    document.getElementById('err-msg').textContent = 'Error de red. Verifica tu conexión.';
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('estado-err').classList.add('visible');
+  }
+}
+</script>
+</body>
+</html>
