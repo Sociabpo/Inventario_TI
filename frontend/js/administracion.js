@@ -72,7 +72,7 @@ function renderUsuariosSistema(list) {
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           ${editBtn}
-          <button class="btn btn-ghost btn-sm" style="color:var(--cyan);border-color:rgba(6,191,255,0.3)" onclick="abrirModalAccesos('${u.id}','${u.nombre.replace(/'/g, "\\'")}')">🔑 Accesos</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--cyan);border-color:rgba(var(--accent-rgb),0.3)" onclick="abrirModalAccesos('${u.id}','${u.nombre.replace(/'/g, "\\'")}')">🔑 Accesos</button>
           ${pwdBtn}
         </div>
       </td>
@@ -648,7 +648,7 @@ async function cargarRolesRef() {
         </span>
       </div>
       <div style="padding:10px 16px;display:flex;flex-wrap:wrap;gap:5px">
-        ${r.permisos.length ? r.permisos.map(p => `<span style="font-size:10px;font-family:var(--mono);background:rgba(6,191,255,0.06);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--text2)">${p}</span>`).join('') : '<span style="font-size:11px;color:var(--text3)">Sin permisos asignados</span>'}
+        ${r.permisos.length ? r.permisos.map(p => `<span style="font-size:10px;font-family:var(--mono);background:rgba(var(--accent-rgb),0.06);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--text2)">${p}</span>`).join('') : '<span style="font-size:11px;color:var(--text3)">Sin permisos asignados</span>'}
       </div>
     </div>`).join('');
 }

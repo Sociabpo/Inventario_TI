@@ -72,7 +72,7 @@ function renderActivos(list) {
       <td><div style="font-size:11px">${a.procesador||'—'}</div><div class="td-sub">${a.memoria_ram||''}</div></td>
       <td><div class="td-sub">${a.nombre_empresa||'—'}</div></td>
       <td>${a.nombre_usuario?`<div class="td-name">${a.nombre_usuario}</div><div class="td-sub">${a.documento_usuario}</div>`:'<span style="color:var(--text3)">—</span>'}</td>
-      <td><span class="badge ${badgeEstado(a.estado)}">${labelEstado(a.estado)}</span>${a.ubicacion && a.estado!=='asignado' ? `<div class="td-sub" style="font-size:10px">📍 ${a.ubicacion}</div>` : ''}${a.estado==='reservado' && a.reserva_alta ? `<div class="td-sub" style="font-size:10px;color:#54A0FF">📌 Reservado: ${a.reserva_alta}</div>` : ''}${loanBadge(a)}${rentalBadge(a)}${custodioBadge(a)}</td>
+      <td><span class="badge ${badgeEstado(a.estado)}">${labelEstado(a.estado)}</span>${a.ubicacion && a.estado!=='asignado' ? `<div class="td-sub" style="font-size:10px">📍 ${a.ubicacion}</div>` : ''}${a.estado==='reservado' && a.reserva_alta ? `<div class="td-sub" style="font-size:10px;color:var(--info)">📌 Reservado: ${a.reserva_alta}</div>` : ''}${loanBadge(a)}${rentalBadge(a)}${custodioBadge(a)}</td>
       <td style="white-space:nowrap">
         <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();abrirEtiqueta('${a.id_placa_activo}','${a.tipo_activo}','${a.empresa_id}')" title="Imprimir etiqueta"><i class="ti ti-qrcode"></i></button>
         <button class="btn btn-ghost btn-sm" style="color:var(--purple);border-color:rgba(167,139,255,0.3)" onclick="event.stopPropagation();abrirHojaVida('${a.id}')"><i class="ti ti-id-badge"></i> Hoja de vida</button>

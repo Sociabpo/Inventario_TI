@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Servicios TIC — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/fonts.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.5.0/dist/tabler-icons.min.css">
-  <link rel="stylesheet" href="/css/dashboard.css?v=1">
+  <link rel="stylesheet" href="/css/dashboard.css?v=2">
 </head>
 <body>
 
@@ -175,10 +175,10 @@
           <div class="donut-wrap">
             <div class="donut-row">
               <svg width="110" height="110" viewBox="0 0 110 110">
-                <circle cx="55" cy="55" r="42" fill="none" stroke="#152440" stroke-width="14"/>
+                <circle cx="55" cy="55" r="42" fill="none" stroke="var(--dark4)" stroke-width="14"/>
                 <circle id="d-asig" cx="55" cy="55" r="42" fill="none" stroke="var(--cyan)" stroke-width="14" stroke-dasharray="264" stroke-dashoffset="66" stroke-linecap="round" transform="rotate(-90 55 55)"/>
-                <text x="55" y="51" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="800" font-family="JetBrains Mono,monospace" id="d-total">—</text>
-                <text x="55" y="65" text-anchor="middle" fill="var(--text3)" font-size="8" font-family="Exo 2,sans-serif">TOTAL</text>
+                <text x="55" y="51" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="800" font-family="Geist Mono,monospace" id="d-total">—</text>
+                <text x="55" y="65" text-anchor="middle" fill="var(--text3)" font-size="8" font-family="Geist,sans-serif">TOTAL</text>
               </svg>
               <div class="donut-legend">
                 <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--cyan)"></div>Asignados</div><span class="legend-val" id="leg-a">—</span></div>
@@ -241,7 +241,7 @@
       <div class="search-bar">
         <input class="search-input" id="search-activos" placeholder="Buscar por placa, serial, modelo, empleado..." oninput="buscarActivos()">
         <button class="btn btn-ghost btn-filtros" id="btn-filtros-activos" onclick="toggleFiltros('activos')">⚙ Filtros</button>
-        <button class="btn btn-ghost" data-permiso-btn="reservas.gestionar" style="color:#54A0FF;border-color:rgba(84,160,255,0.35)" onclick="abrirModalReserva()"><i class="ti ti-bookmark"></i> Reservar</button>
+        <button class="btn btn-ghost" data-permiso-btn="reservas.gestionar" style="color:var(--info);border-color:rgba(var(--info-rgb),0.35)" onclick="abrirModalReserva()"><i class="ti ti-bookmark"></i> Reservar</button>
         <button class="btn btn-primary" onclick="abrirModalActivo()">+ Nuevo activo</button>
       </div>
       <div class="filtros-panel" id="filtros-activos">
@@ -294,7 +294,7 @@
       <div class="search-bar">
         <input class="search-input" id="search-accesorios" placeholder="Buscar por placa, tipo, marca..." oninput="buscarAccesorios()">
         <button class="btn btn-ghost btn-filtros" id="btn-filtros-accesorios" onclick="toggleFiltros('accesorios')">⚙ Filtros</button>
-        <button class="btn btn-ghost" data-permiso-btn="reservas.gestionar" style="color:#54A0FF;border-color:rgba(84,160,255,0.35)" onclick="abrirModalReserva()"><i class="ti ti-bookmark"></i> Reservar</button>
+        <button class="btn btn-ghost" data-permiso-btn="reservas.gestionar" style="color:var(--info);border-color:rgba(var(--info-rgb),0.35)" onclick="abrirModalReserva()"><i class="ti ti-bookmark"></i> Reservar</button>
         <button class="btn btn-primary" onclick="abrirModalAccesorio()">+ Nuevo accesorio</button>
       </div>
       <div class="filtros-panel" id="filtros-accesorios">
@@ -411,10 +411,10 @@
             <div id="asig-acc-lista" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
           </div>
 
-          <div id="asig-info" style="display:none;background:rgba(6,191,255,0.08);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--cyan)"></div>
+          <div id="asig-info" style="display:none;background:rgba(var(--accent-rgb),0.08);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--cyan)"></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
             <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;font-weight:600">Responsable entrega <span style="color:var(--text3);font-weight:400;text-transform:none">(usuario actual)</span></label>
-              <input class="finput" id="asig-responsable" readonly title="Se asigna automáticamente al usuario que registra la asignación" style="background:rgba(6,191,255,0.05);color:var(--text2);cursor:not-allowed"></div>
+              <input class="finput" id="asig-responsable" readonly title="Se asigna automáticamente al usuario que registra la asignación" style="background:rgba(var(--accent-rgb),0.05);color:var(--text2);cursor:not-allowed"></div>
             <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;font-weight:600">Observaciones</label>
               <input class="finput" id="asig-obs" placeholder="Opcional..."></div>
           </div>
@@ -1271,7 +1271,7 @@
       <button class="modal-close" onclick="cerrarModal('modal-reserva')" style="margin-left:auto">×</button>
     </div>
     <div class="modal-body">
-      <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:14px;border-radius:8px;background:rgba(84,160,255,0.10);border:1px solid rgba(84,160,255,0.30);color:#54A0FF;font-size:12px">
+      <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:14px;border-radius:8px;background:rgba(var(--info-rgb),0.10);border:1px solid rgba(var(--info-rgb),0.30);color:var(--info);font-size:12px">
         <i class="ti ti-bookmark"></i> Aparta recursos disponibles para un ingreso. Pasan a estado "reservado" hasta que se asignen, se cancele la reserva, o venza la fecha límite.
       </div>
       <div class="frow cols2">
@@ -1993,7 +1993,7 @@
         </div>
         <div class="fgroup">
           <label>Color (hex, opcional)</label>
-          <input class="finput" id="cat-modal-color" placeholder="#06BFFF">
+          <input class="finput" id="cat-modal-color" placeholder="var(--cyan)">
         </div>
       </div>
       <div class="fgroup" id="cat-anios-wrap" style="display:none;margin-top:12px">
@@ -2529,7 +2529,7 @@
       <input type="hidden" id="mae-empresa-id">
 
       <!-- Info empleado -->
-      <div style="background:rgba(6,191,255,0.08);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;margin-bottom:16px">
+      <div style="background:rgba(var(--accent-rgb),0.08);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;margin-bottom:16px">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Empleado</div>
         <div style="font-size:14px;font-weight:700;color:var(--cyan)" id="mae-emp-nombre">—</div>
         <div style="font-size:11px;color:var(--text2);margin-top:2px" id="mae-emp-info">—</div>
@@ -2588,7 +2588,7 @@
     </div>
     <div class="modal-body">
       <!-- Info empleado -->
-      <div style="background:rgba(6,191,255,0.08);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;margin-bottom:16px">
+      <div style="background:rgba(var(--accent-rgb),0.08);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;margin-bottom:16px">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Empleado</div>
         <div style="font-size:14px;font-weight:700;color:var(--cyan)" id="remp-emp-nombre">—</div>
         <div style="font-size:11px;color:var(--text2);margin-top:2px" id="remp-emp-info">—</div>
@@ -2664,7 +2664,7 @@
         <div class="frow cols2" style="margin-top:14px">
           <div class="fgroup">
             <label>Responsable que recibe <span style="color:var(--text3);font-weight:400;text-transform:none">(usuario actual)</span></label>
-            <input class="finput" id="mdev-responsable" readonly title="Se asigna automáticamente al usuario que registra la devolución" style="background:rgba(6,191,255,0.05);color:var(--text2);cursor:not-allowed">
+            <input class="finput" id="mdev-responsable" readonly title="Se asigna automáticamente al usuario que registra la devolución" style="background:rgba(var(--accent-rgb),0.05);color:var(--text2);cursor:not-allowed">
           </div>
           <div class="fgroup">
             <label>Estado físico de los equipos</label>
@@ -2815,7 +2815,7 @@
         <div class="fgroup"><label>Empresa por defecto</label>
           <select class="fselect" id="adm-usr-empresa"><option value="">Sin empresa (global)</option></select></div>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:8px;padding:8px 10px;background:rgba(6,191,255,0.05);border:1px solid var(--border);border-radius:6px">
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;padding:8px 10px;background:rgba(var(--accent-rgb),0.05);border:1px solid var(--border);border-radius:6px">
         Después de crear el usuario podrás asignarle roles y empresas desde el panel de accesos.
       </div>
     </div>
@@ -2875,7 +2875,7 @@
           </div>
         </div>
         <!-- Formulario para agregar acceso -->
-        <div style="background:rgba(6,191,255,0.03);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <div style="background:rgba(var(--accent-rgb),0.03);border:1px solid var(--border);border-radius:10px;padding:14px">
           <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-weight:600;margin-bottom:12px">Agregar nuevo acceso</div>
           <div class="fgroup" style="margin-bottom:10px">
             <label>Rol</label>
@@ -2937,7 +2937,7 @@
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         <input class="finput" id="firma-link-input" readonly
-               style="font-family:var(--mono);font-size:11px;flex:1;background:rgba(6,191,255,0.05);color:var(--cyan)">
+               style="font-family:var(--mono);font-size:11px;flex:1;background:rgba(var(--accent-rgb),0.05);color:var(--cyan)">
         <button class="btn btn-primary" onclick="copiarLinkFirma()" style="white-space:nowrap;flex-shrink:0">
           Copiar link
         </button>
@@ -2977,7 +2977,7 @@
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         <input class="finput" id="asig-exito-link" readonly
-               style="font-family:var(--mono);font-size:11px;flex:1;background:rgba(6,191,255,0.05);color:var(--cyan)">
+               style="font-family:var(--mono);font-size:11px;flex:1;background:rgba(var(--accent-rgb),0.05);color:var(--cyan)">
         <button class="btn btn-primary" onclick="copiarAsigExitoLink()" style="white-space:nowrap;flex-shrink:0">Copiar link</button>
       </div>
       <div id="asig-exito-expira" style="font-size:10px;color:var(--text3);margin-top:8px"></div>

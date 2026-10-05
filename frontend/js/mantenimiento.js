@@ -74,7 +74,7 @@ function renderTiposPlan() {
   const cont = document.getElementById('plan-tipos-lista');
   if (!cont) return;
   cont.innerHTML = _planTipos.map(t => `
-    <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(6,191,255,0.12);border:1px solid rgba(6,191,255,0.3);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--cyan)">
+    <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--cyan)">
       ${t}
       <button onclick="quitarTipoPlan('${t.replace(/'/g,'')}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;padding:0;line-height:1">×</button>
     </span>`).join('') || '<span style="color:var(--text3);font-size:11px">Ningún tipo agregado</span>';

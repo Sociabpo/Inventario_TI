@@ -113,7 +113,7 @@ function renderSolicitudes(list) {
       acc = `<button class="btn btn-ghost btn-sm" style="color:var(--green);border-color:rgba(0,229,160,.3)" onclick="aprobarSolicitud('${s.id}')">Aprobar</button>
              <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,77,109,.3)" onclick="rechazarSolicitud('${s.id}')">Rechazar</button>`;
     else if (s.estado === 'aprobada' && puedeCrear)
-      acc = `<button class="btn btn-ghost btn-sm" style="color:var(--cyan);border-color:rgba(6,191,255,.3)" onclick="abrirModalOrden('${s.id}')">Crear OC</button>`;
+      acc = `<button class="btn btn-ghost btn-sm" style="color:var(--cyan);border-color:rgba(var(--accent-rgb),.3)" onclick="abrirModalOrden('${s.id}')">Crear OC</button>`;
     // Cancelar disponible en borrador / pendiente_aprobacion
     if (['borrador', 'pendiente_aprobacion'].includes(s.estado) && puedeCrear)
       acc += ` <button class="btn btn-ghost btn-sm" style="color:var(--text3)" onclick="cancelarSolicitud('${s.id}')">Cancelar</button>`;
@@ -500,7 +500,7 @@ function renderOrdenes(list) {
   tbody.innerHTML = list.map(o => {
     const tcol = o.tipo === 'alquiler' ? 'var(--purple)' : 'var(--cyan)';
     let acc = (puedeRec && ['emitida', 'parcialmente_recibida'].includes(o.estado))
-      ? `<button class="btn btn-ghost btn-sm" style="color:var(--cyan);border-color:rgba(6,191,255,.3)" onclick="abrirModalRecepcion('${o.id}')">Recepcionar</button>` : '';
+      ? `<button class="btn btn-ghost btn-sm" style="color:var(--cyan);border-color:rgba(var(--accent-rgb),.3)" onclick="abrirModalRecepcion('${o.id}')">Recepcionar</button>` : '';
     if (puedeEditarErp)
       acc += ` <button class="btn btn-ghost btn-sm" title="Número de orden ERP" onclick="editarErpOrden('${o.id}')">${o.numero_orden_erp ? '✎ ERP' : '+ ERP'}</button>`;
     return `<tr>

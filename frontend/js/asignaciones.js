@@ -86,7 +86,7 @@ function _renderResultadosActivo(lista) {
     const bloqueado = yaAgregado || !asignable;
     const estadoTxt = yaAgregado ? '✓ ya agregado' : a.estado;
     const col = yaAgregado ? 'var(--amber)'
-      : (a.estado === 'disponible' ? 'var(--green)' : (a.estado === 'reservado' ? '#54A0FF' : 'var(--red)'));
+      : (a.estado === 'disponible' ? 'var(--green)' : (a.estado === 'reservado' ? 'var(--info)' : 'var(--red)'));
     const serial = a.serial ? ` · <span class="asig-res-serial">S/N ${a.serial}</span>` : '';
     return `<div class="asig-res-item ${bloqueado?'disabled':''}" ${bloqueado?'':`onclick="seleccionarActivoAsig(${i})"`}>
       <span class="asig-res-placa">${a.id_placa_activo}</span>
@@ -123,7 +123,7 @@ function renderAsigActivosLista() {
   const lista = document.getElementById('asig-activos-lista');
   if (!lista) return;
   lista.innerHTML = asigActivos.map(a => `
-    <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(6,191,255,0.12);border:1px solid rgba(6,191,255,0.3);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--cyan)">
+    <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--cyan)">
       <span class="mono-tag" style="font-size:9px">${a.id_placa_activo}</span>
       🖥 ${a.tipo_activo||''} ${a.marca||''}
       <button onclick="quitarActivoAsig('${a.id}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;padding:0;line-height:1">×</button>
@@ -188,7 +188,7 @@ function _renderResultadosAcc(lista) {
     const bloqueado = yaAgregado || !asignable;
     const estadoTxt = yaAgregado ? '✓ ya agregado' : a.estado;
     const col = yaAgregado ? 'var(--amber)'
-      : (a.estado === 'disponible' ? 'var(--green)' : (a.estado === 'reservado' ? '#54A0FF' : 'var(--red)'));
+      : (a.estado === 'disponible' ? 'var(--green)' : (a.estado === 'reservado' ? 'var(--info)' : 'var(--red)'));
     const serial = a.serial ? ` · <span class="asig-res-serial">S/N ${a.serial}</span>` : '';
     return `<div class="asig-res-item ${bloqueado?'disabled':''}" ${bloqueado?'':`onclick="seleccionarAccesorioAsig(${i})"`}>
       <span class="asig-res-placa">${a.id_placa_accesorio}</span>

@@ -24,7 +24,7 @@ function loanBadge(a) {
   if (d != null && d <= 3) {
     return `<div class="td-sub" style="font-size:10px;color:var(--amber);font-weight:600">⏳ Vence en ${d}d</div>`;
   }
-  return `<div class="td-sub" style="font-size:10px;color:#54A0FF">📅 Préstamo hasta ${fFechaCorta(a.fecha_limite_devolucion)}</div>`;
+  return `<div class="td-sub" style="font-size:10px;color:var(--info)">📅 Préstamo hasta ${fFechaCorta(a.fecha_limite_devolucion)}</div>`;
 }
 
 // Marca de alquiler (rental): el recurso NO es propiedad, pertenece a un contrato.
@@ -40,10 +40,10 @@ function loanActions(tipo, a, placa) {
   const fl = a.fecha_limite_devolucion || '';
   if (a.es_prestamo && fl) {
     return `
-      <button class="btn btn-ghost btn-sm" style="color:#54A0FF;border-color:rgba(84,160,255,0.3)" onclick="event.stopPropagation();abrirModalPrestamo('${tipo}','${a.id}','${placa}','${fl}')" title="Extender préstamo"><i class="ti ti-calendar-plus"></i> Extender</button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--info);border-color:rgba(var(--info-rgb),0.3)" onclick="event.stopPropagation();abrirModalPrestamo('${tipo}','${a.id}','${placa}','${fl}')" title="Extender préstamo"><i class="ti ti-calendar-plus"></i> Extender</button>
       <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();convertirIndefinido('${tipo}','${a.id}','${placa}')" title="Convertir a asignación indefinida"><i class="ti ti-infinity"></i> Indefinido</button>`;
   }
-  return `<button class="btn btn-ghost btn-sm" style="color:#54A0FF;border-color:rgba(84,160,255,0.3)" onclick="event.stopPropagation();abrirModalPrestamo('${tipo}','${a.id}','${placa}','')" title="Definir préstamo"><i class="ti ti-calendar"></i> Préstamo</button>`;
+  return `<button class="btn btn-ghost btn-sm" style="color:var(--info);border-color:rgba(var(--info-rgb),0.3)" onclick="event.stopPropagation();abrirModalPrestamo('${tipo}','${a.id}','${placa}','')" title="Definir préstamo"><i class="ti ti-calendar"></i> Préstamo</button>`;
 }
 
 // ── Modal de fecha límite ────────────────────────────────────

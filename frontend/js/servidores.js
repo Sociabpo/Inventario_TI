@@ -466,12 +466,12 @@ function _renderDetalleHerramientas(herramientas) {
       </select>
       <input id="new-herr-version" placeholder="Versión" style="width:90px" class="finput">
       <button class="btn btn-sm" onclick="agregarHerramientaServidor()">+ Asignar</button>
-      <button class="btn btn-ghost btn-sm" style="color:var(--cyan);border-color:rgba(6,191,255,0.3)"
+      <button class="btn btn-ghost btn-sm" style="color:var(--cyan);border-color:rgba(var(--accent-rgb),0.3)"
               onclick="document.getElementById('nueva-herr-form').style.display=document.getElementById('nueva-herr-form').style.display==='none'?'':'none'">
         ＋ Nueva herramienta
       </button>
     </div>
-    <div id="nueva-herr-form" style="display:none;margin-bottom:12px;padding:10px 12px;background:rgba(6,191,255,0.05);border:1px solid rgba(6,191,255,0.2);border-radius:8px">
+    <div id="nueva-herr-form" style="display:none;margin-bottom:12px;padding:10px 12px;background:rgba(var(--accent-rgb),0.05);border:1px solid rgba(var(--accent-rgb),0.2);border-radius:8px">
       <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px">Agregar al catálogo</div>
       <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
         <input id="nueva-herr-nombre" placeholder="Nombre *" style="flex:1;min-width:140px" class="finput">

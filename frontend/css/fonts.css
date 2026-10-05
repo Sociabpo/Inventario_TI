@@ -1,0 +1,16 @@
+/* Self-hosted Geist (text) + Geist Mono (data) — Tico Nexus type.
+   Variable fonts: single file covers weights 100–900. */
+@font-face {
+  font-family: 'Geist';
+  src: url('/css/fonts/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/css/fonts/GeistMono-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}

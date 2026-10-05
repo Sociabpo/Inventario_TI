@@ -101,7 +101,7 @@ async function cargarHojaVidaEnVista(activoId) {
 
 // ── Device SVGs ────────────────────────────────────────────────────────────────
 function getDeviceSVG(tipo) {
-  const F = '#1c2128', S = '#30363d', A = '#06BFFF';
+  const F = '#1c2128', S = '#30363d', A = '#267EE8';
   const t = (tipo || '').toLowerCase();
   if (['portatil', 'portátil', 'pc', 'aio'].some(x => t.includes(x)))
     return `<svg width="96" height="96" viewBox="0 0 96 96"><rect x="20" y="22" width="56" height="38" rx="3" fill="${F}" stroke="${S}" stroke-width="2"/><rect x="26" y="28" width="44" height="26" rx="1" fill="#0d1117" stroke="${A}" stroke-width="1"/><path d="M14 66 H82 L76 60 H20 Z" fill="${F}" stroke="${S}" stroke-width="2"/><rect x="40" y="62" width="16" height="2" rx="1" fill="${A}"/></svg>`;
@@ -147,7 +147,7 @@ function renderHVHeader(a, stats, usuario, opts) {
   const kpis = [
     { v: stats.edad_meses, l: 'Meses', c: '#A78BFF' },
     { v: stats.total_mantenimientos, l: 'Mantenim.', c: '#FFB020' },
-    { v: stats.total_asignaciones, l: 'Asignaciones', c: '#06BFFF' },
+    { v: stats.total_asignaciones, l: 'Asignaciones', c: '#267EE8' },
     { v: _hvMoney(stats.inversion_total), l: 'Inversión', c: '#00E5A0' },
   ].map(k => `<div class="hv-kpi"><div style="font-size:17px;font-weight:700;color:${k.c}">${k.v}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">${k.l}</div><div class="hv-kpi-accent" style="width:100%;background:${k.c}"></div></div>`).join('');
 
@@ -304,7 +304,7 @@ function renderHVTabAsignaciones(asigs) {
     const actas = (a.actas || []).map(ac =>
       `<button class="btn btn-ghost btn-sm" onclick="descargarActa('${ac.id}')"><i class="ti ti-file-text"></i> ${_hvEsc(ac.numero || ac.tipo)}</button>`).join(' ');
     return `<div class="hv-asig-card ${actual ? 'current' : ''}">
-      <div class="hv-resp-av" style="background:#06BFFF22;color:#06BFFF;border:1px solid #06BFFF55">${_hvEsc(ini)}</div>
+      <div class="hv-resp-av" style="background:rgba(var(--accent-rgb),0.13);color:var(--cyan);border:1px solid rgba(var(--accent-rgb),0.33)">${_hvEsc(ini)}</div>
       <div style="flex:1">
         <div style="font-size:12px;color:var(--text);font-weight:500">${_hvEsc(u.nombre_completo || '—')}${actual ? ' <span class="badge asignado" style="font-size:9px">Actual</span>' : ''}</div>
         <div style="font-size:10px;color:var(--text3)">${_hvEsc([u.cargo, u.empresa].filter(Boolean).join(' · '))}</div>

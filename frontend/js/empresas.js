@@ -6,7 +6,7 @@ async function cargarEmpresasTabla() {
   tbody.innerHTML = data.map(e => `
     <tr class="clickable" onclick="editarEmpresa('${e.id}')">
       <td><span class="mono-tag">${e.nit}</span></td>
-      <td><div class="td-name">${e.nombre_empresa}</div>${(e.relacionadas && e.relacionadas.length) ? `<div class="td-sub" style="font-size:10px;color:#54A0FF">↔ ${e.relacionadas.map(r=>r.nombre_empresa).join(', ')}</div>` : ''}</td>
+      <td><div class="td-name">${e.nombre_empresa}</div>${(e.relacionadas && e.relacionadas.length) ? `<div class="td-sub" style="font-size:10px;color:var(--info)">↔ ${e.relacionadas.map(r=>r.nombre_empresa).join(', ')}</div>` : ''}</td>
       <td><span class="mono-tag">${e.prefijo}</span></td>
       <td>${e.ciudad||'—'}</td>
       <td style="font-size:11px">${e.correo||'—'}</td>

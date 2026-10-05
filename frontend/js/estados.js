@@ -296,7 +296,7 @@ function renderBajas(list) {
     return `<tr>
       <td><span class="mono-tag">${b.numero_baja}</span></td>
       <td><span class="mono-tag">${b.placa || '—'}</span><div class="td-sub">${b.tipo_activo || ''}</div></td>
-      <td>${_MOTIVO_LBL[b.motivo] || b.motivo}${b.motivo === 'traslado' && b.empresa_destino_nombre ? `<div class="td-sub" style="font-size:10px;color:#54A0FF">→ ${b.empresa_destino_nombre}</div>` : ''}${b.motivo === 'hurto' && b.numero_denuncia ? `<div class="td-sub" style="font-size:10px;color:var(--text3)">Denuncia: ${b.numero_denuncia}</div>` : ''}</td>
+      <td>${_MOTIVO_LBL[b.motivo] || b.motivo}${b.motivo === 'traslado' && b.empresa_destino_nombre ? `<div class="td-sub" style="font-size:10px;color:var(--info)">→ ${b.empresa_destino_nombre}</div>` : ''}${b.motivo === 'hurto' && b.numero_denuncia ? `<div class="td-sub" style="font-size:10px;color:var(--text3)">Denuncia: ${b.numero_denuncia}</div>` : ''}</td>
       <td style="max-width:220px;font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.justificacion || ''}</td>
       <td style="font-size:11px">${b.solicitado_por || '—'}</td>
       <td><span class="badge ${_APROB_BADGE[b.estado_aprobacion] || 'disponible'}">${b.estado_aprobacion}</span></td>

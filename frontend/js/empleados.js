@@ -16,7 +16,7 @@ function renderUsuarios(list) {
       <td style="font-size:11px">${u.sede||'—'}</td>
       <td><div class="td-sub">${u.nombre_empresa||'—'}</div></td>
       <td><span class="badge ${u.estado}">${u.estado}</span></td>
-      <td><button class="btn btn-ghost btn-sm" style="color:var(--cyan);border-color:rgba(6,191,255,0.3)" onclick="event.stopPropagation();abrirRecursosEmpleado('${u.id}','${u.nombre_completo.replace(/'/g,"\\'")}','${u.documento}','${u.empresa_id}')">📦 Ver recursos</button></td>
+      <td><button class="btn btn-ghost btn-sm" style="color:var(--cyan);border-color:rgba(var(--accent-rgb),0.3)" onclick="event.stopPropagation();abrirRecursosEmpleado('${u.id}','${u.nombre_completo.replace(/'/g,"\\'")}','${u.documento}','${u.empresa_id}')">📦 Ver recursos</button></td>
       <td><button class="btn btn-ghost btn-sm" style="color:var(--green);border-color:rgba(0,229,160,0.3)" onclick="event.stopPropagation();verUltimaActa('${u.id}','${u.nombre_completo.replace(/'/g,"\\''")}')">📄 Última acta</button></td>
     </tr>`).join('')
     : '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:20px">Sin empleados</td></tr>';
@@ -164,7 +164,7 @@ let empSedes = [];
 function renderEmpSedes() {
   const cont = document.getElementById('emp-sedes-lista');
   cont.innerHTML = empSedes.map((s, i) => `
-    <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(6,191,255,0.1);border:1px solid var(--border2);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--cyan)">
+    <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(var(--accent-rgb),0.1);border:1px solid var(--border2);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--cyan)">
       🏢 ${s}
       <button type="button" onclick="quitarSedeEmp(${i})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;padding:0;line-height:1">×</button>
     </span>`).join('');
